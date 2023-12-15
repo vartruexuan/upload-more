@@ -97,6 +97,8 @@ layui.config({
 });
 ```
 # 效果
+![uploadMore](https://github.com/vartruexuan/upload-more/assets/20641529/2787af46-2b08-4481-9e3d-90ab29d2f5f6)
+
 
 
 
