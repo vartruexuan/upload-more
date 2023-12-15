@@ -2,9 +2,11 @@
 </h1>
 
 <a href="https://github.com/layui/layui" rel="nofollow"><img src="https://img.shields.io/badge/layui-^2.8.17-red.svg?maxAge=2592000" alt="Yii Version" data-canonical-src="https://img.shields.io/badge/yii-~2.0.14-red.svg?maxAge=2592000" style="max-width: 100%;"></a>
-
 # 概述
 - 多文件上传组件 (支持拖拽排序/预览/拖拽上传)
+- 拖拽排序依赖组件 [sortablejs](http://www.sortablejs.com/)
+# 效果
+![uploadMore](https://github.com/vartruexuan/upload-more/assets/20641529/2787af46-2b08-4481-9e3d-90ab29d2f5f6)
 # 使用
 ```html
 <form class="layui-form layui-form-pane layui-code-item-preview" lay-filter="form-goods">
@@ -52,8 +54,13 @@ layui.config({
             'preview', // 预览
             'delete', // 删除
         ],
-        // 初始化数据
-        initValue: [],
+        // 初始化数据(支持对象方式/字符串)
+        initValue: [
+            "http://xxxx.com/demo.jpeg",
+            {
+                url:"http://xxxx.com/demo.jpeg"
+            }
+        ],
         // 数据解析
         parseData: function (res) {
             return {
@@ -96,8 +103,6 @@ layui.config({
     }
 });
 ```
-# 效果
-![uploadMore](https://github.com/vartruexuan/upload-more/assets/20641529/2787af46-2b08-4481-9e3d-90ab29d2f5f6)
 
 
 
