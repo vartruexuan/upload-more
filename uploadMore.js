@@ -26,7 +26,7 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
             // 上传配置
             upload: {
                 // 参考组件 upload
-                drag: true, // 默认排序
+                drag: true, // 默认支持拖拽上传
             },
             // 拖拽排序能力配置, false 则无排序
             sortable: {
