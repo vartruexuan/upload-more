@@ -25,11 +25,11 @@
 layui.config({
     // 生成环境时:前填写固定版本,例如v1.0.1,迭代发版请依次叠加..
     version: true,   // 更新组件缓存，设为true不缓存，也可以设一个固定值
-    base: 'assets/module/'
+    base: 'assets/module/', // 组件目录,指定组件项目组件位置即可
 }).extend({
-    uploadMore:'uploadMore',
+    uploadMore:'uploadMore/uploadMore',
     // 拖拽排序组件
-    sortable:'sortable', 
+    sortable:'uploadMore/sortable', 
 }).use(['uploadMore'],function(){
     var uploadMore = layui.uploadMore;
 
