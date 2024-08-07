@@ -1,8 +1,8 @@
 /*!
- * @Title: uploadMore 多文件上传组件
- * @Version: 1.0.0
- * @Description：支持多文件上传,拖拽排序,拖拽上传,图片预览
- * @Author: vartruexuan
+ * @Title: uploadMore
+ * @Version: 1.1
+ * @Description：文件/图片上传组件,预览
+ * @Author: GuoZhaoXuan
  * @License：Apache License 2.0
  */
 layui.define(['upload', 'layer', 'sortable'], function (exports) {
@@ -26,17 +26,31 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
             // 上传配置
             upload: {
                 // 参考组件 upload
-                drag: true, // 默认支持拖拽上传
+                drag: true, // 默认排序
             },
             // 拖拽排序能力配置, false 则无排序
             sortable: {
                 // 参考组件 sortable
             },
-            operation: [
+            // 上传按钮状态: 1.一直显示(默认)  2.没有成员时显示 3.隐藏
+            uploadBtnStatus: 1,
+            operation: options.operation ? options : [
                 'update', // 编辑
                 'preview', // 预览
                 'delete', // 删除
             ],
+            on: {
+                // 添加成员
+                add: function (itemInfo, obj) {
+                },
+                // 删除成员
+                del: function (itemInfo, obj) {
+                },
+                // 上传成功回调
+                success: function (itemInfo, obj) {
+
+                }
+            },
             // 初始化数据
             initValue: [],
             parseData: function (res) {
@@ -49,7 +63,8 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
                 }
             }
         };
-        that.options = $.extend(true, defaultOption, options);
+        // that.options = $.extend(true, defaultOption, options);
+        that.options = $.extend(defaultOption, options);
         that.init(); // 初始化
     };
 
@@ -191,6 +206,12 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
         this.container.delegate('.uploadMore-operation-action-delete', 'click', function (e) {
             layui.stope(e);
             that.removeItem($(this).parents('.uploadMore-item:eq(0)').data('index'));
+            if (that.getCurrentNum(false) < 1) {
+                // 无数据时显示上传按钮
+                if (that.options.uploadBtnStatus === 2) {
+                    that.uploadBtn.removeClass('layui-hide');
+                }
+            }
 
         });
         // 文件预览
@@ -229,6 +250,11 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
         that.uploadBtn = that.getUploadBtnTpl();
         that.container.append('<div class="layui-hide"><input type="hidden" class="uploadMore-uploadInput"></div>');
         that.container.append(that.uploadBtn);
+
+        // 隐藏上传按钮
+        if (that.options.uploadBtnStatus === 3) {
+            that.switchUploadBtnStatus(true);
+        }
     };
 
     /**
@@ -253,18 +279,20 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
      */
     uploadMore.prototype.bindSortable = function () {
         var that = this;
+        if (that.options.sortable !== false) {
+            that.sortable = new Sortable(that.container[0], $.extend(that.options.sortable, {
+                swapThreshold: 1,
+                animation: 150,
+                handle: '.uploadMore-drag', // 设置触发排序区域元素
+                draggable: ".uploadMore-item",// 允许排序类名
+                // 列表内元素顺序更新的时候触发
+                onEnd: function (/**Event*/evt) {
+                    // same properties as onEnd
+                    that.resetSort();
+                },
+            }));
+        }
 
-        that.sortable = new Sortable(that.container[0], $.extend(that.options.sortable, {
-            swapThreshold: 1,
-            animation: 150,
-            handle: '.uploadMore-drag', // 设置触发排序区域元素
-            draggable: ".uploadMore-item",// 允许排序类名
-            // 列表内元素顺序更新的时候触发
-            onEnd: function (/**Event*/evt) {
-                // same properties as onEnd
-                that.resetSort();
-            },
-        }));
     };
 
 
@@ -351,6 +379,16 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
             // $(this).parents('.uploadMore-item').remove();
         });
 
+
+        // 隐藏上传按钮
+        if (that.options.uploadBtnStatus === 2) {
+            that.switchUploadBtnStatus(true);
+        }
+
+        // 执行回调
+        if (that.options.on.add) {
+            that.options.on.add(that.getItemInfo(index), that);
+        }
 
         return index;
     };
@@ -541,14 +579,19 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
     uploadMore.prototype.removeItem = function (index) {
         var that = this;
         that.getItem(index).remove();
+        var item = that.getItemInfo(index);
         // 移除成员信息
-        delete that.items[index];
+        that.delItemInfo(index);
         // 更新当前数
         that.getCurrentNum();
         // 重置排序
         that.resetSort();
         if (this.isAllowAdd()) {
             that.switchUploadStatus(false);
+        }
+        // 执行回调
+        if (that.options.on.del) {
+            that.options.on.del(item, that);
         }
     };
     /**
@@ -618,6 +661,11 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
         that.changeProgress(index, 0);
 
         // that.getItem(index).trigger('mouseenter');
+        // 执行回调
+        if (that.options.on.success) {
+            that.options.on.success(that.getItemInfo(index), that);
+        }
+
     };
 
     /**
@@ -698,6 +746,17 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
         var that = this;
         that.items[this.getIndex(index)] = $.extend(that.getItemInfo(index), info);
         return that.getItemInfo(index);
+    };
+
+    /**
+     * 删除成员信息
+     *
+     *
+     * @param index
+     */
+    uploadMore.prototype.delItemInfo = function (index) {
+        var that = this;
+        delete that.items[index];
     };
 
     /**
@@ -911,6 +970,21 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
             '                </span>' +
             '            </label>');
         return item;
+    };
+
+    /**
+     * 切换上传按钮状态
+     *
+     * @param isHide
+     * @returns {*}
+     */
+    uploadMore.prototype.switchUploadBtnStatus = function (isHide = false) {
+        var that = this;
+        if (isHide) {
+            return that.uploadBtn.addClass('layui-hide')
+        } else {
+            return that.uploadBtn.removeClass('layui-hide')
+        }
     };
     /**
      * 获取文件url地址集合

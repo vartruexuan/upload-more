@@ -7,6 +7,9 @@
 - 拖拽排序依赖组件 [sortablejs](http://www.sortablejs.com/)
 # 效果
 ![uploadMore](https://github.com/vartruexuan/upload-more/assets/20641529/2787af46-2b08-4481-9e3d-90ab29d2f5f6)
+
+# 在线预览
+[在线预览](https://stackblitz.com/edit/stackblitz-starters-s7w41y?file=index.html)
 # 使用
 ```html
 <form class="layui-form layui-form-pane layui-code-item-preview" lay-filter="form-goods">
@@ -36,17 +39,37 @@ layui.config({
     // 渲染组件
     var uploadMoreObj= uploadMore.render({
         //容器对象
-        elem: null,
+        elem: "#image",
         // 限制数量 0 无限制
         maxNum: 5,
+    
         // 上传配置
         upload: {
             // 参考组件 layui.upload <https://layui.dev/docs/2/upload/>
+            field: 'file',
+            data: {
+                type: 'files',
+            },
+            acceptMime: 'image/*',//限制类型
+            url: admin.getApiFullUrl('/index/upload'),//上传地址
+            size: 20000,// 限制文件大小
         },
-        // 拖拽排序能力配置, false 关闭排序
-        sortable: {
-            // 参考组件 sortable.js <http://www.sortablejs.com/>
-            // 无特殊需求不建议配置
+        // 上传按钮展示状态: 1.一直显示(默认)  2.没有成员时显示 3.隐藏
+        uploadBtnStatus: 1,
+        // 事件监听
+        on: {
+            // 添加成员
+            add: function (itemInfo, obj) {
+                console.log("添加")
+            },
+            // 删除成员
+            del: function (itemInfo, obj) {
+                console.log("删除")
+            },
+            // 上传成功回调
+            success: function (itemInfo, obj) {
+                console.log("成功")
+            }
         },
         // 成员操作按钮配置 (默认都有)
         operation: [
@@ -61,16 +84,14 @@ layui.config({
                 url:"http://xxxx.com/demo.jpeg"
             }
         ],
-        // 数据解析
         parseData: function (res) {
             return {
-                "code": res.code, // 状态码（此处按0成功）
-                "message": res.msg, // 返回信息
-                "fileInfo": res.data.info, // 文件完整信息
-                "url": res.data.info.url, // 文件地址
-                "mimeType": res.data.info.mimeType, // 文件mime类型
-            }
-        }
+                "code": res.code, // code 码 (0 成功)
+                "msg": res.msg,   // 消息
+                "fileInfo": res.data && res.data.info ? res.data.info : null,  // 数据
+                "url": res.data && res.data.info ? res.data.info.url : '',// 图片地址
+            };
+        },
     });
     // 获取文件url地址集合
     var fileUrls = uploadMoreObj.getFileUrls();
