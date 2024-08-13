@@ -12,7 +12,7 @@
     position: relative;
     width: 120px;
     height: 120px;
-    border: 1px solid #ddd;
+    border: 1px solid gray;
     text-align: center;
     line-height: 80px;
     padding: 4px;
@@ -57,12 +57,13 @@
     line-height: 80px;
     padding: 4px;
     border-radius: 4px;
+
     border: 1px dashed #d9d9d9;
 }
 
 /* 上传按钮-文件数量 */
 .uploadMore-uploadBtn .uploadMore-fileNum {
-
+    background: rgba(239, 235, 235, 0.5);
     border-bottom-left-radius: 4px;
     position: absolute;
     z-index: 2;
@@ -71,10 +72,7 @@
     height: 30px;
     display: flex;
     align-items: center;
-    justify-content: center;
-    line-height: 1px;
-    user-select: none;
-    -webkit-user-select: none;
+    justify-content: center
 }
 
 /* 上传按钮-上传图标 */
@@ -109,7 +107,7 @@
     justify-content: center;
     background: rgba(0, 0, 0, 0.4);
     font-size: 30px;
-    opacity: 0.5;
+    opacity: 0;
     transition: all 0.2s ease 0s;
 }
 
@@ -150,6 +148,7 @@
 
 /*************************** 进度条 end ***************************/
 
+/*************************** 进度条 start ***************************/
 .uploadMore-message {
     position: absolute;
     z-index: 2;
@@ -177,6 +176,7 @@
     align-content: center;
 }
 
+/*************************** 进度条 end ***************************/
 
 /************************* 错误消息 ***************************************/
 .uploadMore-message-content span {
@@ -193,6 +193,12 @@
     color: #2c2cc6;
     font-weight: bold;
 }
-.uploadMore-message-content .uploadMore-operation-action-delete:hover {
+.uploadMore-message-content .uploadMore-retryUpload {
+}
+
+.uploadMore-message-content .uploadMore-error{
+
+}
+.uploadMore-message-content .uploadMore-operation-action-delete:hover  {
     color: red;
 }
