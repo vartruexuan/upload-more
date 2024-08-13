@@ -181,7 +181,7 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
             // 显示蒙版
             var index = $(this).data('index');
             if (that.getItemInfo(index).isShowAction) {
-                $(this).find('.uploadMore-operation').removeClass('layui-hide').animate({opacity: 0.6}, 200);
+                $(this).find('.uploadMore-operation').removeClass('layui-hide').animate({opacity: 0.8}, 200);
             }
         });
         that.container.delegate('.uploadMore-item', 'mouseleave', function (e) {
@@ -858,7 +858,7 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
 
         // 插入蒙版操作
         if (that.options.operation && that.options.operation.length > 0) {
-            var operationBox = $('<div class="uploadMore-operation"><div class="uploadMore-operation-box"></div></div>');
+            var operationBox = $('<div class="uploadMore-operation layui-hide"><div class="uploadMore-operation-box"></div></div>');
             // 编辑按钮
             if ($.inArray('update', that.options.operation) !== -1) {
                 operationBox.find('.uploadMore-operation-box').append(

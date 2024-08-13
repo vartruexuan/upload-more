@@ -72,7 +72,11 @@
     height: 30px;
     display: flex;
     align-items: center;
-    justify-content: center
+    justify-content: center;
+    line-height: normal;
+    user-select: none;
+    -webkit-user-select: none;
+    cursor: pointer;
 }
 
 /* 上传按钮-上传图标 */
@@ -192,12 +196,6 @@
 .uploadMore-message-content span:hover {
     color: #2c2cc6;
     font-weight: bold;
-}
-.uploadMore-message-content .uploadMore-retryUpload {
-}
-
-.uploadMore-message-content .uploadMore-error{
-
 }
 .uploadMore-message-content .uploadMore-operation-action-delete:hover  {
     color: red;
