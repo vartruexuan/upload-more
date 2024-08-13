@@ -239,6 +239,11 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
             layui.stope(e);
         });
 
+        // 信息提示
+        this.container.delegate('[uploadMore-tips]','mouseenter',function (e){
+            layui.layer.tips($(this).attr('uploadMore-tips'), this);
+        });
+
         return this;
     };
 
@@ -953,7 +958,7 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
         var item = $('<div class="uploadMore-uploadBtn"></div>');
         // 文件数量限制展示(限制文件数量)
         var isLimitMax = that.options.maxNum > 0;
-        item.append('    <div class="uploadMore-fileNum" ' + (isLimitMax ? 'lay-tips="最多支持上传' + that.options.maxNum + '个文件"' : '') + ' style="padding: 0 6px;">' +
+        item.append('    <div class="uploadMore-fileNum" ' + (isLimitMax ? 'uploadMore-tips="最多支持上传' + that.options.maxNum + '个文件"' : '') + ' style="padding: 0 6px;">' +
             '                <span class="uploadMore-currentNum">0</span>' +
             '                <span class="' + (isLimitMax ? "" : "layui-hide") + '">/</span>' +
             '                <span class="uploadMore-maxNum' + (isLimitMax ? "" : "layui-hide") + '" >' + that.options.maxNum + '</span>' +
