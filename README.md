@@ -69,9 +69,9 @@
             ],
             // 初始化数据(支持对象方式/字符串)
             initValue: [
-                'https://ghavatars.staticblitz.com/vartruexuan.png',
+                'https://xxx.com/xx.png',
                 {
-                    url: 'https://ghavatars.staticblitz.com/vartruexuan.png',
+                    url: 'https://xxx.com/xx.png',
                 },
             ],
             // 事件监听

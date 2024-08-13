@@ -32,9 +32,9 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
             sortable: {
                 // 参考组件 sortable
             },
-            // 上传按钮状态: 1.一直显示(默认)  2.没有成员时显示 3.隐藏
-            uploadBtnStatus: 1,
-            operation: options.operation ? options : [
+            //hideUploadBtn: false,
+            uploadBtnStatus: 1, // 1.一直显示(默认)  2.没有成员时显示 3.隐藏
+            operation: [
                 'update', // 编辑
                 'preview', // 预览
                 'delete', // 删除
@@ -181,7 +181,7 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
             // 显示蒙版
             var index = $(this).data('index');
             if (that.getItemInfo(index).isShowAction) {
-                $(this).find('.uploadMore-operation').removeClass('layui-hide').animate({opacity: 1}, 200);
+                $(this).find('.uploadMore-operation').removeClass('layui-hide').animate({opacity: 0.6}, 200);
             }
         });
         that.container.delegate('.uploadMore-item', 'mouseleave', function (e) {
@@ -952,12 +952,13 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
         var that = this;
         var item = $('<div class="uploadMore-uploadBtn"></div>');
         // 文件数量限制展示(限制文件数量)
-        // if (that.options.maxNum > 0) {
-        item.append('    <div class="uploadMore-fileNum" style="padding: 0 6px;">' +
-            '                <span class="uploadMore-currentNum">0</span><span class="' + (that.options.maxNum > 0 ? "" : "layui-hide") + '">/<span class="uploadMore-maxNum" >' + that.options.maxNum + '</span></span>' +
+        var isLimitMax = that.options.maxNum > 0;
+        item.append('    <div class="uploadMore-fileNum" ' + (isLimitMax ? 'lay-tips="最多支持上传' + that.options.maxNum + '个文件"' : '') + ' style="padding: 0 6px;">' +
+            '                <span class="uploadMore-currentNum">0</span>' +
+            '                <span class="' + (isLimitMax ? "" : "layui-hide") + '">/</span>' +
+            '                <span class="uploadMore-maxNum' + (isLimitMax ? "" : "layui-hide") + '" >' + that.options.maxNum + '</span>' +
             '            </div>'
         );
-        //}
 
         // 上传图标展示
         var icon = that.options.upload.drag ? 'layui-icon-upload' : 'layui-icon-add-1';
