@@ -5,9 +5,6 @@
 # 概述
 - 多文件上传组件 (支持拖拽排序/预览/拖拽上传)
 - 拖拽排序依赖组件 [sortablejs](http://www.sortablejs.com/)
-# 效果
-![uploadMore](https://github.com/vartruexuan/upload-more/assets/20641529/2787af46-2b08-4481-9e3d-90ab29d2f5f6)
-
 # 在线预览
 [在线预览](https://stackblitz.com/edit/stackblitz-starters-s7w41y?file=index.html)
 # 使用
