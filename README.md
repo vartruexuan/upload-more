@@ -59,11 +59,11 @@
                 // 无特殊需求不建议配置
             },
             // 成员操作按钮配置 (默认都有)
-            operation: [
-                'update', // 编辑
-                'preview', // 预览
-                'delete', // 删除
-            ],
+            operation: {
+                'update': true, // 编辑
+                'preview':true, // 预览
+                'delete':true // 删除
+            },
             // 初始化数据(支持对象方式/字符串)
             initValue: [
                 'https://xxx.com/xx.png',
@@ -84,6 +84,10 @@
                 // 上传成功回调
                 success: function (itemInfo, obj) {
                     console.log('成功');
+                },
+                // 上传失败回调
+                error: function (itemInfo, obj,errorMsg) {
+                    console.log('失败');
                 },
             },
 
