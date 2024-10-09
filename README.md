@@ -5,6 +5,10 @@
 # 概述
 - 多文件上传组件 (支持拖拽排序/预览/拖拽上传)
 - 拖拽排序依赖组件 [sortablejs](http://www.sortablejs.com/)
+
+[github](https://github.com/vartruexuan/upload-more)
+[gitee](https://gitee.com/vartruexuan/upload-more)
+
 # 在线预览
 [在线预览](https://stackblitz.com/edit/stackblitz-starters-s7w41y?file=index.html)
 # 使用
@@ -21,18 +25,15 @@
 ```
 - js
 ```javascript
- layui
-    .config({
+ layui.config({
         // 生成环境时:前填写固定版本,例如v1.0.1,迭代发版请依次叠加..
         version: true, // 更新组件缓存，设为true不缓存，也可以设一个固定值
         base: 'extends/', // 组件目录,指定组件项目组件位置即可
-    })
-    .extend({
+    }).extend({
         uploadMore: 'uploadMore/uploadMore',
         // 拖拽排序组件
         sortable: 'uploadMore/sortable',
-    })
-    .use(['uploadMore'], function () {
+    }).use(['uploadMore'], function () {
         var uploadMore = layui.uploadMore;
         var $ = layui.jquery;
         // 多图片
