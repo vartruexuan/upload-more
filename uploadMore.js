@@ -99,7 +99,7 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
                      * 添加成员回调
                      *
                      * @param itemInfo
-                     * @param obj
+                     * @param obj+
                      */
                     add: function (itemInfo, obj) {
                     },
@@ -216,17 +216,13 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
                 'dragleave',
                 function (e) {
                     e.preventDefault();
-                    that.container
-                        .find('.uploadMore-uploadInput')
-                        .trigger('upload.leave');
+                    that.container.find('.uploadMore-uploadInput').trigger('upload.leave');
                 }
             );
 
             that.container.delegate('.uploadMore-uploadBtn', 'drop', function (e) {
                 e.preventDefault();
-                that.container
-                    .find('.uploadMore-uploadInput')
-                    .trigger('upload.drop', e);
+                that.container.find('.uploadMore-uploadInput').trigger('upload.drop', e);
             });
         }
 
@@ -239,10 +235,7 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
                 // 显示蒙版
                 var index = $(this).data('index');
                 if (that.getItemInfo(index).isShowAction) {
-                    $(this)
-                        .find('.uploadMore-operation')
-                        .removeClass('layui-hide')
-                        .animate({opacity: 0.8}, 200);
+                    $(this).find('.uploadMore-operation').removeClass('layui-hide').animate({opacity: 0.8}, 200);
                 }
             }
         );
@@ -259,9 +252,7 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
             'mouseenter',
             function (e) {
                 $(this).css({
-                    color: $(this).hasClass('uploadMore-operation-action-delete')
-                        ? 'red'
-                        : '#4444d9',
+                    color: $(this).hasClass('uploadMore-operation-action-delete') ? 'red' : '#4444d9',
                 });
             }
         );
@@ -269,9 +260,7 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
             '.uploadMore-operation-action',
             'mouseleave',
             function (e) {
-                $(this).css({
-                    color: 'white',
-                });
+                $(this).css({color: 'white',});
             }
         );
         // 删除按钮事件
@@ -463,27 +452,19 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
             that.switchUploadStatus(true);
         }
         // 错误消息
-        that
-            .getItem(index)
-            .find('.uploadMore-error')
-            .unbind('mouseenter')
-            .bind('mouseenter', function () {
-                layui.layer.tips($(this).attr('data-tips'), this);
-            });
+        that.getItem(index).find('.uploadMore-error').unbind('mouseenter').bind('mouseenter', function () {
+            layui.layer.tips($(this).attr('data-tips'), this);
+        });
         // 重新上传
-        that
-            .getItem(index)
-            .find('.uploadMore-retryUpload')
-            .unbind('click')
-            .bind('click', function () {
-                // 重置状态信息
-                that.resetItem(index);
-                // 重新上传
-                obj.upload(index, file);
-                // upload();
-                // 删除自己
-                // $(this).parents('.uploadMore-item').remove();
-            });
+        that.getItem(index).find('.uploadMore-retryUpload').unbind('click').bind('click', function () {
+            // 重置状态信息
+            that.resetItem(index);
+            // 重新上传
+            obj.upload(index, file);
+            // upload();
+            // 删除自己
+            // $(this).parents('.uploadMore-item').remove();
+        });
 
         // 隐藏上传按钮
         if (that.options.uploadBtnStatus === 2) {
@@ -548,10 +529,7 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
                         }
                     }
                     // 制空文件
-                    that.container
-                        .find('input.uploadMore-uploadInput:eq(0)')
-                        .next()
-                        .val('');
+                    that.container.find('input.uploadMore-uploadInput:eq(0)').next().val('');
                 });
             },
             // 进度
@@ -606,13 +584,13 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
     uploadMore.prototype.checkAccept = function (file) {
         var that = this;
         // 文件类型名称
-        var typeName =
-            {
-                file: '文件',
-                images: '图片',
-                video: '视频',
-                audio: '音频',
-            }[that.options.upload.accept] || '文件';
+        var typeNames = {
+            file: '文件',
+            images: '图片',
+            video: '视频',
+            audio: '音频'
+        };
+        var typeName = typeNames[that.options.upload.accept] || '文件';
         var text = that.options.upload.text || {}; // 错误信息设置
         // 根据文件类型校验
         var exts = that.options.upload.exts;
@@ -640,9 +618,7 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
                 break;
         }
         if (!check) {
-            that.msg(
-                text['check-error'] || '选择的' + typeName + '中包含不支持的格式'
-            );
+            that.msg(text['check-error'] || '选择的' + typeName + '中包含不支持的格式');
         }
         return check;
     };
