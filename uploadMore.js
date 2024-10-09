@@ -63,9 +63,7 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
      */
     uploadMore.prototype.initOption = function (options) {
         var that = this;
-        that.options = $.extend(
-            true,
-            {
+        that.options = $.extend(true, {
                 elem: null, //容器对象
                 maxNum: 5, // 限制数量 0 无限制
                 upload: {
@@ -103,21 +101,24 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
                      * @param itemInfo
                      * @param obj
                      */
-                    add: function (itemInfo, obj) {},
+                    add: function (itemInfo, obj) {
+                    },
                     /**
                      * 删除成员回调
                      *
                      * @param itemInfo
                      * @param obj
                      */
-                    del: function (itemInfo, obj) {},
+                    del: function (itemInfo, obj) {
+                    },
                     /**
                      * 上传成功回调
                      *
                      * @param itemInfo 成员信息
                      * @param obj
                      */
-                    success: function (itemInfo, obj) {},
+                    success: function (itemInfo, obj) {
+                    },
                     /**
                      * 上传失败回调
                      *
@@ -174,7 +175,7 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
 
         if (that.options.initValue) {
             layui.each(that.options.initValue, function (i, v) {
-                v = layui.type(v) === 'object' ? v : { url: v };
+                v = layui.type(v) === 'object' ? v : {url: v};
                 var urlInfo = layui.url(v.url);
                 var index = that.addItem(null, {
                     name: urlInfo.pathname[urlInfo.pathname.length - 1],
@@ -241,7 +242,7 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
                     $(this)
                         .find('.uploadMore-operation')
                         .removeClass('layui-hide')
-                        .animate({ opacity: 0.8 }, 200);
+                        .animate({opacity: 0.8}, 200);
                 }
             }
         );
@@ -301,22 +302,15 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
                 if (item.find('.uploadMore-file').hasClass('uploadMore-img-preview')) {
                     var imgIndex = 0;
                     // 过滤成功成员
-                    that
-                        .getAllItem()
-                        .filter('[data-is-success="true"]')
-                        .each(function () {
-                            if (
-                                $(this)
-                                    .find('.uploadMore-file')
-                                    .hasClass('uploadMore-img-preview')
-                            ) {
-                                if ($(this).is(item)) {
-                                    return false;
-                                } else {
-                                    imgIndex++;
-                                }
+                    that.getAllItem().filter('[data-is-success="true"]').each(function () {
+                        if ($(this).find('.uploadMore-file').hasClass('uploadMore-img-preview')) {
+                            if ($(this).is(item)) {
+                                return false;
+                            } else {
+                                imgIndex++;
                             }
-                        });
+                        }
+                    });
                     that.previewImage(imgIndex);
                 }
             }
@@ -566,7 +560,8 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
                 that.changeProgress(currentIndex, n);
             },
             // 上传前
-            before: function (obj) {},
+            before: function (obj) {
+            },
             // 上传完成
             done: function (res, currentIndex, upload) {
                 var d = that.options.parseData(res);
@@ -839,7 +834,7 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
 
         // 触发回调
         if (that.options.on.error) {
-            that.options.on.error(errMsg, that.getItemInfo(index), that);
+            that.options.on.error(that.getItemInfo(index), that, errMsg);
         }
     };
 
@@ -1216,7 +1211,7 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
             var index = $(this).data('index');
             var itemInfo = that.getItemInfo(index);
             if (itemInfo.isSuccess) {
-                list.push($.extend(itemInfo.fileInfo, { url: itemInfo.url }));
+                list.push($.extend(itemInfo.fileInfo, {url: itemInfo.url}));
             }
         });
         return list;
