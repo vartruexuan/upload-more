@@ -953,7 +953,7 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
         // 插入蒙版操作
         if (
             that.options.operation.update ||
-            that.options.operation.perview ||
+            that.options.operation.preview ||
             that.options.operation.delete
         ) {
             var operationBox = $('<div class="uploadMore-operation layui-hide"><div class="uploadMore-operation-box"></div></div>');
