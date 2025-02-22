@@ -45,7 +45,7 @@ layui.config({
         concurrencyMaxNum: 0,// 并发处理数 0无限制 (配置将进行分批上传)
         uploadBtnStatus: 1, // 1.一直显示(默认)  2.没有成员时显示 3.隐藏
         style: {
-            size: 120,
+            size: 120, // 成员尺寸
         },
         // 成员操作按钮配置 (默认都有)
         operation: {
