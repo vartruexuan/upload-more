@@ -1,15 +1,12 @@
 /*!
  * @Title: uploadMore
- * @Version: 1.1
+ * @Version: 1.2
  * @Description：文件/图片上传组件,预览
  * @Author: GuoZhaoXuan
  * @License：Apache License 2.0
  */
 layui.define(['upload', 'layer', 'sortable'], function (exports) {
-    var $ = layui.jquery,
-        upload = layui.upload,
-        layer = layui.layer,
-        Sortable = layui.sortable;
+    var $ = layui.jquery, upload = layui.upload, layer = layui.layer, Sortable = layui.sortable;
     /**
      * 绑定事件的模块名
      *
@@ -37,12 +34,8 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
         this.delete();
         // 嵌入css
         $.ajax({
-            url: layui.cache.modules[MOD_NAME].replace('.js', '.css'),
-            async: false,
-            success: function (res) {
-                $('head').append(
-                    '<style id="' + MOD_NAME + '-css">' + res + '</style>'
-                );
+            url: layui.cache.modules[MOD_NAME].replace('.js', '.css'), async: false, success: function (res) {
+                $('head').append('<style id="' + MOD_NAME + '-css">' + res + '</style>');
             },
         });
         // 渲染上传按钮
@@ -64,75 +57,66 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
     uploadMore.prototype.initOption = function (options) {
         var that = this;
         that.options = $.extend(true, {
-                elem: null, //容器对象
-                maxNum: 5, // 限制数量 0 无限制
-                upload: {
-                    // 上传配置，组件 upload
-                    drag: true, // 默认排序
-                },
-                // 参考组件 sortable, false 则无排序
-                sortable: {},
-                /**
-                 *  上传按钮状态: 1.一直显示(默认)  2.没有成员时显示 3.隐藏
-                 */
-                uploadBtnStatus: 1,
-                // 操作按钮
-                operation: {
-                    update: true,
-                    preview: true,
-                    delete: true,
-                },
+            elem: null, //容器对象
+            maxNum: 5, // 限制最多数量 0 无限制
+            concurrencyMaxNum: 0,// 并发处理数 0无限制
+            upload: {
+                // 上传配置，组件 upload
+                drag: true, // 默认排序
+            }, // 参考组件 sortable, false 则无排序
+            sortable: {}, /**
+             *  上传按钮状态: 1.一直显示(默认)  2.没有成员时显示 3.隐藏
+             */
+            uploadBtnStatus: 1, // 操作按钮
+            operation: {
+                update: true,
+                preview: true,
+                delete: true,
+            },
 
-                // 初始化数据
-                initValue: [],
-                parseData: function (res) {
-                    return {
-                        code: res.code, // 状态码（此处按0成功）
-                        message: res.msg, // 返回信息
-                        fileInfo: res.data.info, // 文件完整信息
-                        url: res.data.info.url, // 文件地址
-                        mimeType: res.data.info.mimeType,
-                    };
-                },
-                on: {
-                    /**
-                     * 添加成员回调
-                     *
-                     * @param itemInfo
-                     * @param obj+
-                     */
-                    add: function (itemInfo, obj) {
-                    },
-                    /**
-                     * 删除成员回调
-                     *
-                     * @param itemInfo
-                     * @param obj
-                     */
-                    del: function (itemInfo, obj) {
-                    },
-                    /**
-                     * 上传成功回调
-                     *
-                     * @param itemInfo 成员信息
-                     * @param obj
-                     */
-                    success: function (itemInfo, obj) {
-                    },
-                    /**
-                     * 上传失败回调
-                     *
-                     * @param errorMsg 错误信息
-                     * @param itemInfo 成员信息
-                     * @param obj
-                     */
-                    error: function (itemInfo, obj, errorMsg) {
-                        // obj.getItem(index);
-                    },
+            // 初始化数据
+            initValue: [], parseData: function (res) {
+                return {
+                    code: res.code, // 状态码（此处按0成功）
+                    message: res.msg || '', // 返回信息
+                    fileInfo: (res.data && res.data.info) ? res.data.info : {}, // 文件完整信息
+                    url: (res.data && res.data.info) ? res.data.info.url : '', // 文件地址
+                    mimeType: (res.data && res.data.info) ? res.data.info.mimeType : 'image/jpeg',
+                };
+            }, on: {
+                /**
+                 * 添加成员回调
+                 *
+                 * @param itemInfo
+                 * @param obj+
+                 */
+                add: function (itemInfo, obj) {
+                }, /**
+                 * 删除成员回调
+                 *
+                 * @param itemInfo
+                 * @param obj
+                 */
+                del: function (itemInfo, obj) {
+                }, /**
+                 * 上传成功回调
+                 *
+                 * @param itemInfo 成员信息
+                 * @param obj
+                 */
+                success: function (itemInfo, obj) {
+                }, /**
+                 * 上传失败回调
+                 *
+                 * @param errorMsg 错误信息
+                 * @param itemInfo 成员信息
+                 * @param obj
+                 */
+                error: function (itemInfo, obj, errorMsg) {
+                    // obj.getItem(index);
                 },
             },
-            options
-        );
+        }, options);
         return this;
     };
 
@@ -161,8 +145,18 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
                       isShowAction: false, // 是否展示操作按钮
                       sort:0, // 排序值
                       isSuccess:false,// 是否上传成功
+                      isRetry: false,// 是否为重新上传
+                      status:1, // 状态: 1.待处理 2.上传中 3.上传失败 4.上传成功
                   }*/
         };
+
+        // 队列信息
+        this.waitWork = []; // 待处理文件
+        this.queueWork = [];
+        this.queueWorkLock = false;
+        this.queueWorkKey = 0;
+        this.queueWorkStatusNum = 0;
+
 
         return this;
     };
@@ -178,8 +172,7 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
                 v = layui.type(v) === 'object' ? v : {url: v};
                 var urlInfo = layui.url(v.url);
                 var index = that.addItem(null, {
-                    name: urlInfo.pathname[urlInfo.pathname.length - 1],
-                    type: uploadMoreObj.getMimeTypeByFile(v.url),
+                    name: urlInfo.pathname[urlInfo.pathname.length - 1], type: uploadMoreObj.getMimeTypeByFile(v.url),
                 });
                 that.successProgress(index, v);
             });
@@ -202,23 +195,15 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
 
         // 拖拽上传
         if (that.options.upload.drag) {
-            that.container.delegate(
-                '.uploadMore-uploadBtn',
-                'dragover',
-                function (e) {
-                    e.preventDefault();
-                    that.container.find('.uploadMore-uploadInput').trigger('upload.over');
-                }
-            );
+            that.container.delegate('.uploadMore-uploadBtn', 'dragover', function (e) {
+                e.preventDefault();
+                that.container.find('.uploadMore-uploadInput').trigger('upload.over');
+            });
 
-            that.container.delegate(
-                '.uploadMore-uploadBtn',
-                'dragleave',
-                function (e) {
-                    e.preventDefault();
-                    that.container.find('.uploadMore-uploadInput').trigger('upload.leave');
-                }
-            );
+            that.container.delegate('.uploadMore-uploadBtn', 'dragleave', function (e) {
+                e.preventDefault();
+                that.container.find('.uploadMore-uploadInput').trigger('upload.leave');
+            });
 
             that.container.delegate('.uploadMore-uploadBtn', 'drop', function (e) {
                 e.preventDefault();
@@ -227,18 +212,14 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
         }
 
         // 蒙版展示切换
-        that.container.delegate(
-            '.uploadMore-item',
-            'mouseenter mousemove',
-            function (e) {
-                layui.stope(e);
-                // 显示蒙版
-                var index = $(this).data('index');
-                if (that.getItemInfo(index).isShowAction) {
-                    $(this).find('.uploadMore-operation').removeClass('layui-hide').animate({opacity: 0.8}, 200);
-                }
+        that.container.delegate('.uploadMore-item', 'mouseenter mousemove', function (e) {
+            layui.stope(e);
+            // 显示蒙版
+            var index = $(this).data('index');
+            if (that.getItemInfo(index).isShowAction) {
+                $(this).find('.uploadMore-operation').removeClass('layui-hide').animate({opacity: 0.8}, 200);
             }
-        );
+        });
         that.container.delegate('.uploadMore-item', 'mouseleave', function (e) {
             layui.stope(e);
             // 隐藏蒙版
@@ -247,78 +228,55 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
             });
         });
         // 蒙版功能按钮能力
-        this.container.delegate(
-            '.uploadMore-operation-action',
-            'mouseenter',
-            function (e) {
-                $(this).css({
-                    color: $(this).hasClass('uploadMore-operation-action-delete') ? 'red' : '#4444d9',
-                });
-            }
-        );
-        this.container.delegate(
-            '.uploadMore-operation-action',
-            'mouseleave',
-            function (e) {
-                $(this).css({color: 'white',});
-            }
-        );
+        that.container.delegate('.uploadMore-operation-action', 'mouseenter', function (e) {
+            $(this).css({
+                color: $(this).hasClass('uploadMore-operation-action-delete') ? 'red' : '#4444d9',
+            });
+        });
+        that.container.delegate('.uploadMore-operation-action', 'mouseleave', function (e) {
+            $(this).css({color: 'white',});
+        });
         // 删除按钮事件
-        this.container.delegate(
-            '.uploadMore-operation-action-delete',
-            'click',
-            function (e) {
-                layui.stope(e);
-                that.removeItem(
-                    $(this).parents('.uploadMore-item:eq(0)').data('index')
-                );
-                if (that.getCurrentNum(false) < 1) {
-                    // 无数据时显示上传按钮
-                    if (that.options.uploadBtnStatus === 2) {
-                        that.uploadBtn.removeClass('layui-hide');
-                    }
+        that.container.delegate('.uploadMore-operation-action-delete', 'click', function (e) {
+            layui.stope(e);
+            that.removeItem($(this).parents('.uploadMore-item:eq(0)').data('index'));
+            if (that.getCurrentNum(false) < 1) {
+                // 无数据时显示上传按钮
+                if (that.options.uploadBtnStatus === 2) {
+                    that.uploadBtn.removeClass('layui-hide');
                 }
             }
-        );
+        });
         // 文件预览
-        this.container.delegate(
-            '.uploadMore-operation-action-preview',
-            'click',
-            function (e) {
-                layui.stope(e);
-                var item = $(this).parents('.uploadMore-item:eq(0)');
-                // 图片预览
-                if (item.find('.uploadMore-file').hasClass('uploadMore-img-preview')) {
-                    var imgIndex = 0;
-                    // 过滤成功成员
-                    that.getAllItem().filter('[data-is-success="true"]').each(function () {
-                        if ($(this).find('.uploadMore-file').hasClass('uploadMore-img-preview')) {
-                            if ($(this).is(item)) {
-                                return false;
-                            } else {
-                                imgIndex++;
-                            }
+        that.container.delegate('.uploadMore-operation-action-preview', 'click', function (e) {
+            layui.stope(e);
+            var item = $(this).parents('.uploadMore-item:eq(0)');
+            // 图片预览
+            if (item.find('.uploadMore-file').hasClass('uploadMore-img-preview')) {
+                var imgIndex = 0;
+                // 过滤成功成员
+                that.getAllItem().filter('[data-is-success="true"]').each(function () {
+                    if ($(this).find('.uploadMore-file').hasClass('uploadMore-img-preview')) {
+                        if ($(this).is(item)) {
+                            return false;
+                        } else {
+                            imgIndex++;
                         }
-                    });
-                    that.previewImage(imgIndex);
-                }
+                    }
+                });
+                that.previewImage(imgIndex);
             }
-        );
+        });
         // 编辑图片
-        this.container.delegate(
-            '.uploadMore-operation-action-edit',
-            'click',
-            function (e) {
-                layui.stope(e);
-            }
-        );
-
+        that.container.delegate('.uploadMore-operation-action-edit', 'click', function (e) {
+            layui.stope(e);
+        });
         // 信息提示
-        this.container.delegate('[uploadMore-tips]', 'mouseenter', function (e) {
+        that.container.delegate('[uploadMore-tips]', 'mouseenter', function (e) {
             layui.layer.tips($(this).attr('uploadMore-tips'), this);
         });
 
-        return this;
+        return that;
     };
 
     /**
@@ -327,9 +285,7 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
     uploadMore.prototype.renderUploadBtn = function () {
         var that = this;
         that.uploadBtn = that.getUploadBtnTpl();
-        that.container.append(
-            '<div class="layui-hide"><input type="hidden" class="uploadMore-uploadInput"></div>'
-        );
+        that.container.append('<div class="layui-hide"><input type="hidden" class="uploadMore-uploadInput"></div>');
         that.container.append(that.uploadBtn);
 
         // 隐藏上传按钮
@@ -344,16 +300,11 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
     uploadMore.prototype.bindUpload = function () {
         var that = this;
         // 总上传按钮操作
-        that.upload = upload.render(
-            $.extend({}, that.options.upload, that.getUploadCommonConfig(1), {
-                elem: $(this.container).find('.uploadMore-uploadInput:eq(0)'),
-                // 同时上传文件数(multiple:true)
-                number: this.options.maxNum > 0 ? this.options.maxNum : null,
-                // 是否支持多文件
-                multiple: true,
-                unified: false,
-            })
-        );
+        that.upload = upload.render($.extend({}, that.options.upload, that.getUploadCommonConfig(1), {
+            elem: $(this.container).find('.uploadMore-uploadInput:eq(0)'), // 同时上传文件数(multiple:true)
+            number: this.options.maxNum > 0 ? this.options.maxNum : null, // 是否支持多文件
+            multiple: true, unified: false,
+        }));
     };
 
     /**
@@ -362,20 +313,15 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
     uploadMore.prototype.bindSortable = function () {
         var that = this;
         if (that.options.sortable !== false) {
-            that.sortable = new Sortable(
-                that.container[0],
-                $.extend(that.options.sortable, {
-                    swapThreshold: 1,
-                    animation: 150,
-                    handle: '.uploadMore-drag', // 设置触发排序区域元素
-                    draggable: '.uploadMore-item', // 允许排序类名
-                    // 列表内元素顺序更新的时候触发
-                    onEnd: function (/**Event*/ evt) {
-                        // same properties as onEnd
-                        that.resetSort();
-                    },
-                })
-            );
+            that.sortable = new Sortable(that.container[0], $.extend(that.options.sortable, {
+                swapThreshold: 1, animation: 150, handle: '.uploadMore-drag', // 设置触发排序区域元素
+                draggable: '.uploadMore-item', // 允许排序类名
+                // 列表内元素顺序更新的时候触发
+                onEnd: function (/**Event*/ evt) {
+                    // same properties as onEnd
+                    that.resetSort();
+                },
+            }));
         }
     };
 
@@ -398,30 +344,20 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
      * @param obj 文件操作对象
      * @returns {number|null}
      */
-    uploadMore.prototype.addItem = function (
-        index = null,
-        file = null,
-        sortIndex = null,
-        obj = null
-    ) {
+    uploadMore.prototype.addItem = function (index = null, file = null, sortIndex = null, obj = null) {
         var that = this;
         index = that.getIndex(index);
-
         // 初始化成员信息
         that.items[index] = {
-            fileInfo: null,
-            index: index,
-            url: '',
-            // 是否展示操作按钮
-            isShowAction: false,
-            // 文件对象
-            file: file,
-            // mime类型
-            mimeType: file ? file.type : null,
-            // 排序值
-            sort: 0,
-            isUpload: false,
+            index: index, // 下标
+            url: '', // 文件地址
+            fileInfo: null, // 文件信息
+            file: file, // 文件对象
+            isShowAction: false, // 是否展示操作按钮
+            mimeType: file ? file.type : null, // mime类型
+            sort: 0, // 排序值
             isSuccess: false, // 是否上传成功
+            status: 1, isRetry: false,
         };
         var itemTpl = that.getItemTpl(index);
         if (!sortIndex) {
@@ -431,44 +367,46 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
             that.getItem(sortIndex).before(itemTpl);
             that.getItem(sortIndex).remove();
         }
-
         // 渲染进度条
         var progressFilterName = that.getProgressFilterName(index);
         layui.element.render('progress', progressFilterName);
         // 初始化成员信息
         that.setItemInfo(index, {
-            elem: itemTpl,
-            // 进度条
-            progress: progressFilterName,
-            // 绑定单文件操作对象
-            upload: that.bindUploadByItem(index),
+            elem: itemTpl, progress: progressFilterName,// 进度条
+            upload: that.bindUploadByItem(index),// 绑定单文件操作对象
         });
-        // 更新当前数量
-        that.getCurrentNum();
-        // 重置排序
-        that.resetSort();
+
+        that.getCurrentNum(); // 更新当前数量
+        that.resetSort(); // 重置排序
         // 切换上传按钮限制
         if (!this.isAllowAdd()) {
             that.switchUploadStatus(true);
         }
+        that.updateStatus(index, 1);
         // 错误消息
         that.getItem(index).find('.uploadMore-error').unbind('mouseenter').bind('mouseenter', function () {
             layui.layer.tips($(this).attr('data-tips'), this);
         });
+
         // 重新上传
         that.getItem(index).find('.uploadMore-retryUpload').unbind('click').bind('click', function () {
             // 重置状态信息
             that.resetItem(index);
+            that.setItemInfo(index, {
+                isRetry: true,
+            })
             // 重新上传
             obj.upload(index, file);
-            // upload();
-            // 删除自己
-            // $(this).parents('.uploadMore-item').remove();
         });
 
         // 隐藏上传按钮
         if (that.options.uploadBtnStatus === 2) {
             that.switchUploadBtnStatus(true);
+        }
+        if (obj) {
+            that.pushWaitWork({
+                index: index, obj: obj, file: file,
+            });
         }
 
         // 执行回调
@@ -480,6 +418,58 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
     };
 
     /**
+     * 删除成员
+     *
+     * @param index 下标
+     */
+    uploadMore.prototype.removeItem = function (index) {
+        var that = this;
+        that.getItem(index).remove();
+        var item = that.getItemInfo(index);
+        that.delItemInfo(index); // 移除成员信息
+        that.getCurrentNum(); // 更新当前数
+        that.resetSort(); // 重置排序
+        if (this.isAllowAdd()) {
+            that.switchUploadStatus(false);
+        }
+        // 执行回调
+        if (that.options.on.del) {
+            that.options.on.del(item, that);
+        }
+    };
+    /**
+     * 获取成员
+     *
+     * @param index
+     * @returns {*}
+     */
+    uploadMore.prototype.getItem = function (index) {
+        return this.container.find('.uploadMore-item[data-index=' + index + ']');
+    };
+
+    /**
+     * 重置信息
+     *
+     * @param index
+     */
+    uploadMore.prototype.resetItem = function (index) {
+        var that = this;
+        // 隐藏错误信息
+        that.getItem(index).find('.uploadMore-message').addClass('layui-hide');
+        // 隐藏进度条
+        that.getProgressIns(index).addClass('layui-hide');
+    };
+
+    /**
+     * 获取所有的item
+     *
+     * @returns {*}
+     */
+    uploadMore.prototype.getAllItem = function () {
+        return this.container.find('.uploadMore-item');
+    };
+
+    /**
      * 成员中编辑上传操作
      *
      * @param index
@@ -488,13 +478,10 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
     uploadMore.prototype.bindUploadByItem = function (index) {
         var that = this;
         // 单文件编辑
-        return upload.render(
-            $.extend({}, that.options.upload, that.getUploadCommonConfig(2, index), {
-                elem: that.getItem(index).find('.uploadMore-operation-action-edit')[0],
-                // 是否支持多文件
-                multiple: false,
-            })
-        );
+        return upload.render($.extend({}, that.options.upload, that.getUploadCommonConfig(2, index), {
+            elem: that.getItem(index).find('.uploadMore-operation-action-edit')[0], // 是否支持多文件
+            multiple: false,
+        }));
     };
 
     /**
@@ -504,10 +491,7 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
      * @param itemIndex type==2时 的成员下标
      * @returns {{before: before, progress: progress, choose: choose, done: done}}
      */
-    uploadMore.prototype.getUploadCommonConfig = function (
-        type = 1,
-        itemIndex = null
-    ) {
+    uploadMore.prototype.getUploadCommonConfig = function (type = 1, itemIndex = null) {
         var that = this;
         return {
             auto: false, // 不自动上传
@@ -519,45 +503,45 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
             //**************** 跳过内部校验/组件接管校验 end **********
             // 选择文件时
             choose: function (obj) {
-                obj.preview(function (currentIndex, file, result) {
-                    if (that.isAllowAdd() || type === 2) {
-                        // 文件校验
-                        if (that.checkFile(file)) {
-                            that.addItem(currentIndex, file, itemIndex, obj);
-                            // 上传
-                            obj.upload(currentIndex, file);
-                        }
-                    }
-                    // 制空文件
-                    that.container.find('input.uploadMore-uploadInput:eq(0)').next().val('');
-                });
-            },
-            // 进度
+                that.choose(obj, itemIndex);
+            }, // 进度
             progress: function (n, elem, res, currentIndex) {
                 // 改变进度
+                that.updateStatus(currentIndex, 2);
                 that.changeProgress(currentIndex, n);
-            },
-            // 上传前
+            }, // 上传前
             before: function (obj) {
-            },
-            // 上传完成
+            }, // 上传完成
             done: function (res, currentIndex, upload) {
-                var d = that.options.parseData(res);
-                if (d.code === 0) {
-                    // 进度条 完成
-                    that.successProgress(currentIndex, d);
-                } else {
-                    // 错误
-                    that.error(currentIndex, d.message, upload);
-                }
-            },
-            // 上传失败
+                that.done(currentIndex, res);
+            }, // 上传失败
             error: function (currentIndex, upload) {
-                that.error(currentIndex, '上传失败', upload);
-            },
+
+                that.done(currentIndex, null);
+            }
         };
     };
 
+
+    /**
+     * 触发上传队列任务
+     *
+     * @param key
+     */
+    uploadMore.prototype.triggerQueueWork = function (key) {
+        var that = this;
+        if (!that.queueWorkLock) {
+            that.queueWorkStatusNum = 0;
+            if (that.queueWork[key]) {
+                that.queueWorkLock = true;
+                layui.each(that.queueWork[key], function (index, item) {
+                    item.obj.upload(item.index, item.file);
+                });
+                // delete that.queueWork[key];
+            }
+            that.queueWorkLock = false;
+        }
+    };
     /**
      * 文件校验(单文件)
      */
@@ -585,10 +569,7 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
         var that = this;
         // 文件类型名称
         var typeNames = {
-            file: '文件',
-            images: '图片',
-            video: '视频',
-            audio: '音频'
+            file: '文件', images: '图片', video: '视频', audio: '音频'
         };
         var typeName = typeNames[that.options.upload.accept] || '文件';
         var text = that.options.upload.text || {}; // 错误信息设置
@@ -650,6 +631,7 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
 
     /**
      * 切换总上传状态
+     *
      * @param isDisabled
      */
     uploadMore.prototype.switchUploadStatus = function (isDisabled = true) {
@@ -658,49 +640,7 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
     };
 
     /**
-     * 删除成员
-     *
-     * @param index 下标
-     */
-    uploadMore.prototype.removeItem = function (index) {
-        var that = this;
-        that.getItem(index).remove();
-        var item = that.getItemInfo(index);
-        // 移除成员信息
-        that.delItemInfo(index);
-        // 更新当前数
-        that.getCurrentNum();
-        // 重置排序
-        that.resetSort();
-        if (this.isAllowAdd()) {
-            that.switchUploadStatus(false);
-        }
-        // 执行回调
-        if (that.options.on.del) {
-            that.options.on.del(item, that);
-        }
-    };
-    /**
-     * 获取成员
-     *
-     * @param index
-     * @returns {*}
-     */
-    uploadMore.prototype.getItem = function (index) {
-        return this.container.find('.uploadMore-item[data-index=' + index + ']');
-    };
-
-    /**
-     * 获取所有的item
-     *
-     * @returns {*}
-     */
-    uploadMore.prototype.getAllItem = function () {
-        return this.container.find('.uploadMore-item');
-    };
-
-    /**
-     * 充值排序值
+     * 重置排序值
      */
     uploadMore.prototype.resetSort = function () {
         var that = this;
@@ -715,11 +655,32 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
         });
     };
 
+
     /** 进度对象 **/
     uploadMore.prototype.getProgressIns = function (index) {
         var that = this;
         return that.getItem(index).find('.uploadMore-progress');
     };
+
+    /**
+     * 改变进度
+     *
+     * @param index
+     * @param percent
+     * @returns {uploadMore}
+     */
+    uploadMore.prototype.changeProgress = function (index, percent) {
+        var that = this;
+
+        var progress = that.getProgressIns(index);
+        if (percent > 0) {
+            progress.removeClass('layui-hide');
+        }
+        layui.element.progress(that.getProgressFilterName(index), percent + '%');
+        layui.element.render('progress');
+        return this;
+    };
+
     /**
      * 完成进度
      *
@@ -734,10 +695,7 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
             progress.addClass('layui-hide');
         }
         that.setItemInfo(index, {
-            isShowAction: true,
-            fileInfo: data.fileInfo,
-            url: data.url,
-            isSuccess: true,
+            isShowAction: true, fileInfo: data.fileInfo, url: data.url, isSuccess: true, status: 4,
         });
 
         that.getItem(index).attr('data-is-success', true);
@@ -762,7 +720,7 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
         var progress = that.getProgressIns(index);
         progress.addClass('layui-hide');
         that.setItemInfo(index, {
-            isShowAction: false,
+            isShowAction: false, status: 3,
         });
         // 初始进度条
         that.changeProgress(index, 0);
@@ -780,7 +738,6 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
         that.failProgress(index);
         that.getItem(index).find('.uploadMore-message').removeClass('layui-hide');
         that.getItem(index).find('.uploadMore-error').attr('data-tips', errMsg);
-
         // 触发回调
         if (that.options.on.error) {
             that.options.on.error(that.getItemInfo(index), that, errMsg);
@@ -788,31 +745,101 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
     };
 
     /**
-     * 重置信息
+     * 成功处理
      *
-     * @param index
+     *
+     * @param currentIndex 下标
+     * @param d
+     * @returns {uploadMore}
      */
-    uploadMore.prototype.resetItem = function (index) {
+    uploadMore.prototype.success = function (currentIndex, d) {
         var that = this;
-        // 隐藏错误信息
-        that.getItem(index).find('.uploadMore-message').addClass('layui-hide');
-        // 隐藏进度条
-        that.getProgressIns(index).addClass('layui-hide');
+        that.successProgress(currentIndex, d);
+        return that;
+    }
+
+    /**
+     * 上传完成处理
+     *
+     * @param currentIndex
+     * @param res
+     */
+    uploadMore.prototype.done = function (currentIndex, res) {
+        var that = this;
+        var d = res ? that.options.parseData(res) : null;
+        var isTriggerQueueWork = !that.getItemInfo(currentIndex).isRetry;
+        if (d && d.code === 0) {
+            // 成功
+            that.success(currentIndex, d);
+        } else {
+            // 错误
+            that.error(currentIndex, (d && d.message) ? d.message : '上传失败', upload);
+        }
+        // 触发下一次队列任务
+        if (isTriggerQueueWork) {
+            that.queueWorkStatusNum++;
+            var currentQueueWorkCount = that.queueWork[that.queueWorkKey] ? that.queueWork[that.queueWorkKey].length : 0;
+            if (that.queueWork.length > 0 && that.queueWorkStatusNum >= currentQueueWorkCount) {
+                that.triggerQueueWork(++that.queueWorkKey);
+            }
+        }
+    }
+
+    /**
+     * 选择文件处理
+     *
+     * @param obj
+     */
+    uploadMore.prototype.choose = function (obj, itemIndex) {
+        var that = this;
+        layui.each(obj.getChooseFiles(), function (currentIndex, file) {
+            if (that.isAllowAdd() || type === 2) {
+                // 文件校验
+                if (that.checkFile(file)) {
+                    // 添加成员
+                    that.addItem(currentIndex, file, itemIndex, obj);
+                    // 上传
+                    // obj.upload(currentIndex, file);
+                }
+            }
+            // 制空文件
+            that.container.find('input.uploadMore-uploadInput:eq(0)').next().val('');
+        });
+        var total = that.getWaitWorkCount();
+        var chunkSize = that.options.concurrencyMaxNum > 0 ? that.options.concurrencyMaxNum : total;
+        for (let i = 0; i < total; i += chunkSize) {
+            var start = i;
+            var size = i + chunkSize
+            var item = that.waitWork.slice(start, size);
+            that.queueWork.push(item);
+        }
+        that.waitWork = [];
+        that.triggerQueueWork(that.queueWorkKey);
     };
 
     /**
-     * 改变进度
+     * 更新上传状态
+     *
+     * @param index
+     * @param status
      */
-    uploadMore.prototype.changeProgress = function (index, percent) {
+    uploadMore.prototype.updateStatus = function (index, status) {
         var that = this;
-
-        var progress = that.getProgressIns(index);
-        if (percent > 0) {
-            progress.removeClass('layui-hide');
-        }
-        layui.element.progress(that.getProgressFilterName(index), percent + '%');
-        layui.element.render('progress');
-        return this;
+        that.getItem(index).find('.uploadMore-item-status').text(that.statusText()[status]);
+        that.setItemInfo(index, {
+            status: status,
+        });
+    };
+    /**
+     *
+     * 上传状态文案信息
+     *
+     * @returns {{1: string, 2: string, 3: string, 4: string}}
+     */
+    uploadMore.prototype.statusText = function () {
+        return {
+            1: '待上传', 2: '正在上传', 3: '上传失败', 4: '上传成功',
+        };
     };
 
     /**
@@ -869,11 +896,7 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
      * @returns {boolean}
      */
     uploadMore.prototype.isAllowAdd = function (addNum = 0) {
-        return (
-            this.options.maxNum <= 0 ||
-            (this.options.maxNum > 0 &&
-                this.getCurrentNum() + addNum < this.options.maxNum)
-        );
+        return (this.options.maxNum <= 0 || (this.options.maxNum > 0 && this.getCurrentNum() + addNum < this.options.maxNum));
     };
 
     /**
@@ -890,9 +913,7 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
             var itemInfo = that.getItemInfo(index);
             if (itemInfo.isSuccess && $(this).find('.uploadMore-file').hasClass('uploadMore-img-preview')) {
                 data.push({
-                    alt: title,
-                    pid: index,
-                    src: itemInfo.url,
+                    alt: title, pid: index, src: itemInfo.url,
                 });
             }
         });
@@ -919,8 +940,7 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
      */
     uploadMore.prototype.msg = function (content) {
         return layui.layer.msg(content, {
-            icon: 2,
-            shift: 6,
+            icon: 2, shift: 6,
         });
     };
     /**
@@ -937,78 +957,32 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
         // 排序展示
         if (that.options.sortable !== false) {
             // 插入拖拽排序按钮
-            item.append(
-                '<span class="uploadMore-drag"><span' +
-                '                    style="font-size: 16px; display: inline-flex;"><svg xmlns="http://www.w3.org/2000/svg"' +
-                '                                                                        xmlns:xlink="http://www.w3.org/1999/xlink"' +
-                '                                                                        aria-hidden="true" role="img"' +
-                '                                                                        class="iconify iconify--ant-design" width="1em"' +
-                '                                                                        height="1em" preserveAspectRatio="xMidYMid meet"' +
-                '                                                                        viewBox="0 0 1024 1024"><path' +
-                '                    fill="currentColor"' +
-                '                    d="M847.9 592H152c-4.4 0-8 3.6-8 8v60c0 4.4 3.6 8 8 8h605.2L612.9 851c-4.1 5.2-.4 13 6.3 13h72.5c4.9 0 9.5-2.2 12.6-6.1l168.8-214.1c16.5-21 1.6-51.8-25.2-51.8zM872 356H266.8l144.3-183c4.1-5.2.4-13-6.3-13h-72.5c-4.9 0-9.5 2.2-12.6 6.1L150.9 380.2c-16.5 21-1.6 51.8 25.1 51.8h696c4.4 0 8-3.6 8-8v-60c0-4.4-3.6-8-8-8z"></path></svg></span></span>'
-            );
+            item.append('<span class="uploadMore-drag"><span' + '                    style="font-size: 16px; display: inline-flex;"><svg xmlns="http://www.w3.org/2000/svg"' + '                                                                        xmlns:xlink="http://www.w3.org/1999/xlink"' + '                                                                        aria-hidden="true" role="img"' + '                                                                        class="iconify iconify--ant-design" width="1em"' + '                                                                        height="1em" preserveAspectRatio="xMidYMid meet"' + '                                                                        viewBox="0 0 1024 1024"><path' + '                    fill="currentColor"' + '                    d="M847.9 592H152c-4.4 0-8 3.6-8 8v60c0 4.4 3.6 8 8 8h605.2L612.9 851c-4.1 5.2-.4 13 6.3 13h72.5c4.9 0 9.5-2.2 12.6-6.1l168.8-214.1c16.5-21 1.6-51.8-25.2-51.8zM872 356H266.8l144.3-183c4.1-5.2.4-13-6.3-13h-72.5c-4.9 0-9.5 2.2-12.6 6.1L150.9 380.2c-16.5 21-1.6 51.8 25.1 51.8h696c4.4 0 8-3.6 8-8v-60c0-4.4-3.6-8-8-8z"></path></svg></span></span>');
         }
 
         // 插入蒙版操作
-        if (
-            that.options.operation.update ||
-            that.options.operation.preview ||
-            that.options.operation.delete
-        ) {
+        if (that.options.operation.update || that.options.operation.preview || that.options.operation.delete) {
             var operationBox = $('<div class="uploadMore-operation layui-hide"><div class="uploadMore-operation-box"></div></div>');
             // 编辑按钮
             if (that.options.operation.update) {
-                operationBox.find('.uploadMore-operation-box').append(
-                    '<div style="cursor:pointer" class="uploadMore-operation-action uploadMore-operation-action-edit" >' +
-                    '    <i class="layui-icon layui-icon-edit"></i>' +
-                    '</div>'
-                );
+                operationBox.find('.uploadMore-operation-box').append('<div style="cursor:pointer" class="uploadMore-operation-action uploadMore-operation-action-edit" >' + '    <i class="layui-icon layui-icon-edit"></i>' + '</div>');
             }
             // 预览按钮
             if (that.options.operation.preview && that.isAllowPreview(itemInfo.mimeType)) {
-                operationBox.find('.uploadMore-operation-box').append(
-                    '<div style="cursor: pointer; color: white;" class="uploadMore-operation-action uploadMore-operation-action-preview" >' +
-                    '    <i class="layui-icon layui-icon-eye"></i>' +
-                    '</div>'
-                );
+                operationBox.find('.uploadMore-operation-box').append('<div style="cursor: pointer; color: white;" class="uploadMore-operation-action uploadMore-operation-action-preview" >' + '    <i class="layui-icon layui-icon-eye"></i>' + '</div>');
             }
             // 删除按钮
             if (that.options.operation.delete) {
-                operationBox.find('.uploadMore-operation-box').append(
-                    '<div style="cursor: pointer; color: white;" class="uploadMore-operation-action uploadMore-operation-action-delete">' +
-                    '  <i class="layui-icon layui-icon-delete"></i>' +
-                    '</div>'
-                );
+                operationBox.find('.uploadMore-operation-box').append('<div style="cursor: pointer; color: white;" class="uploadMore-operation-action uploadMore-operation-action-delete">' + '  <i class="layui-icon layui-icon-delete"></i>' + '</div>');
             }
             item.append(operationBox);
         }
 
         // 加上进度条
         var filter = that.getProgressFilterName(index);
-        item.append(
-            '<div class="uploadMore-progress">' +
-            '                <div class="uploadMore-progress-box" >' +
-            '                   <div class="layui-progress layui-progress-big" lay-filter="' +
-            filter +
-            '" lay-showpercent="true">' +
-            '                       <div class="layui-progress-bar" lay-percent="0%"></div>' +
-            '                    </div>' +
-            '                 </div>' +
-            '        </div>'
-        );
+        item.append('<div class="uploadMore-progress">' + '                <div class="uploadMore-progress-box" >' + '                   <div class="layui-progress layui-progress-big" lay-filter="' + filter + '" lay-showpercent="true">' + '                       <div class="layui-progress-bar" lay-percent="0%"></div>' + '                    </div>' + '                    <div class="uploadMore-item-status">待处理</div>' + '                 </div>' + '</div>');
         // 加上错误信息展示
-        item.append(
-            '<div class="uploadMore-message layui-hide">' +
-            '                <div class="uploadMore-message-box" >' +
-            '                   <div class="uploadMore-message-content">' +
-            '                       <span class="uploadMore-error" data-tips="测试错误信息"><i class="layui-icon layui-icon-face-cry"></i> 上传失败</span>' +
-            '                       <span class="uploadMore-retryUpload"><i class="layui-icon layui-icon-refresh"></i> 重新上传</span>' +
-            '                       <span class="uploadMore-operation-action-delete"><i class="layui-icon layui-icon-delete"></i> 直接删除</span>' +
-            '                   </div>' +
-            '                 </div>' +
-            '        </div>'
-        );
+        item.append('<div class="uploadMore-message layui-hide">' + '                <div class="uploadMore-message-box" >' + '                   <div class="uploadMore-message-content">' + '                       <span class="uploadMore-error" data-tips="测试错误信息"><i class="layui-icon layui-icon-face-cry"></i> 上传失败</span>' + '                       <span class="uploadMore-retryUpload"><i class="layui-icon layui-icon-refresh"></i> 重新上传</span>' + '                       <span class="uploadMore-operation-action-delete"><i class="layui-icon layui-icon-delete"></i> 直接删除</span>' + '                   </div>' + '                 </div>' + '        </div>');
 
         return item;
     };
@@ -1024,17 +998,9 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
         var tpl;
         var mime = itemInfo.mimeType ? itemInfo.mimeType : '';
         if (mime.indexOf('image/') !== -1) {
-            tpl = $(
-                '<div class=" uploadMore-file uploadMore-img-preview">' +
-                '    <img src="' + (itemInfo ? itemInfo.url : '') + '" style="height: 100%;max-height: 100%">' +
-                '</div>'
-            );
+            tpl = $('<div class=" uploadMore-file uploadMore-img-preview">' + '    <img src="' + (itemInfo ? itemInfo.url : '') + '" style="height: 100%;max-height: 100%">' + '</div>');
         } else {
-            tpl = $(
-                '<div class=" uploadMore-file uploadMore-files-preview">' +
-                '   <span><i class="layui-icon layui-icon-file"></i></span>' +
-                '</div>'
-            );
+            tpl = $('<div class=" uploadMore-file uploadMore-files-preview">' + '   <span><i class="layui-icon layui-icon-file"></i></span>' + '</div>');
         }
 
         return tpl;
@@ -1058,26 +1024,12 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
         var item = $('<div class="uploadMore-uploadBtn"></div>');
         // 文件数量限制展示(限制文件数量)
         var isLimitMax = that.options.maxNum > 0;
-        item.append(
-            '<div class="uploadMore-fileNum" ' + (isLimitMax ? 'uploadMore-tips="最多支持上传' + that.options.maxNum + '个文件"' : '') + ' style="padding: 0 6px;">' +
-            '    <span class="uploadMore-currentNum">0</span>' +
-            '    <span class="' + (isLimitMax ? '' : 'layui-hide') + '">/</span>' +
-            '    <span class="uploadMore-maxNum' + (isLimitMax ? '' : 'layui-hide') + '" >' + that.options.maxNum + '</span>' +
-            '</div>'
-        );
+        item.append('<div class="uploadMore-fileNum" ' + (isLimitMax ? 'uploadMore-tips="最多支持上传' + that.options.maxNum + '个文件"' : '') + ' style="padding: 0 6px;">' + '    <span class="uploadMore-currentNum">0</span>' + '    <span class="' + (isLimitMax ? '' : 'layui-hide') + '">/</span>' + '    <span class="uploadMore-maxNum' + (isLimitMax ? '' : 'layui-hide') + '" >' + that.options.maxNum + '</span>' + '</div>');
 
         // 上传图标展示
         var icon = that.options.upload.drag ? 'layui-icon-upload' : 'layui-icon-add-1';
         var text = that.options.upload.drag ? '拖拽或点击上传' : '点击上传';
-        item.append(
-            '<label class="uploadMore-icon-box">' +
-            '   <span style="font-size: 24px; display: inline-flex; ">' +
-            '     <span>' +
-            '        <i class="layui-icon ' + icon + '" style="font-size: 24px;" title="' + text + '"></i>' +
-            '     </span>' +
-            '  </span>' +
-            '</label>'
-        );
+        item.append('<label class="uploadMore-icon-box">' + '   <span style="font-size: 24px; display: inline-flex; ">' + '     <span>' + '        <i class="layui-icon ' + icon + '" style="font-size: 24px;" title="' + text + '"></i>' + '     </span>' + '  </span>' + '</label>');
         return item;
     };
 
@@ -1154,14 +1106,36 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
         this.container.html('');
     };
 
+    /**
+     * 获取待处理数
+     *
+     * @returns {number}
+     */
+    uploadMore.prototype.getWaitWorkCount = function () {
+        return this.waitWork.length;
+    };
+    /**
+     * 推入队列
+     *
+     * @param queue
+     */
+    uploadMore.prototype.pushWaitWork = function (queue) {
+        this.waitWork.push(queue);
+        return this;
+    };
+
+
     /** 对外提供的方法 */
     var uploadMoreObj = {
-        options: {},
-        /* 渲染 */
+        options: {}, /* 渲染 */
         render: function (options) {
             return new uploadMore($.extend(true, {}, this.options, options));
-        },
-        /**
+        }, sleep: function (delay) {
+            var start = (new Date()).getTime();
+            while ((new Date()).getTime() - start < delay) {
+                continue;
+            }
+        }, /**
          * 全局配置设置
          *
          * @param options
@@ -1169,8 +1143,7 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
         set: function (options) {
             this.options = options;
             return this;
-        },
-        getMimeTypeByExt: function (ext) {
+        }, getMimeTypeByExt: function (ext) {
             var mimeType = {
                 123: 'application/vnd.lotus-1-2-3',
                 '3dml': 'text/vnd.in3d.3dml',
@@ -2166,11 +2139,9 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
                 zmm: 'application/vnd.handheld-entertainment+xml',
             };
             return mimeType[ext];
-        },
-        getMimeTypeByFile: function (filename) {
+        }, getMimeTypeByFile: function (filename) {
             return this.getMimeTypeByExt(this.extname(filename));
-        },
-        extname: function (filename) {
+        }, extname: function (filename) {
             if (filename.lastIndexOf('.') > 0) {
                 return filename.substring(filename.lastIndexOf('.') + 1);
             }
