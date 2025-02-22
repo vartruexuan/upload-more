@@ -42,6 +42,7 @@
             elem: '#image-upload',
             // 限制数量 0 无限制
             maxNum: 5,
+            concurrencyMaxNum: 0,// 并发处理数 0无限制 (配置将进行分批上传)
             // 上传配置
             upload: {
                 // 参考组件 layui.upload <https://layui.dev/docs/2/upload/>
