@@ -26,7 +26,7 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
         that.init(); // 初始化
     };
 
-    /** 初始化表格 */
+    /** 初始化 */
     uploadMore.prototype.init = function () {
         var that = this;
         that.initAttrs();
