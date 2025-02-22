@@ -503,7 +503,7 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
             //**************** 跳过内部校验/组件接管校验 end **********
             // 选择文件时
             choose: function (obj) {
-                that.choose(obj, itemIndex);
+                that.choose(obj, type, itemIndex);
             }, // 进度
             progress: function (n, elem, res, currentIndex) {
                 // 改变进度
@@ -790,7 +790,7 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
      *
      * @param obj
      */
-    uploadMore.prototype.choose = function (obj, itemIndex) {
+    uploadMore.prototype.choose = function (obj, type, itemIndex) {
         var that = this;
         layui.each(obj.getChooseFiles(), function (currentIndex, file) {
             if (that.isAllowAdd() || type === 2) {
