@@ -60,22 +60,27 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
             elem: null, //容器对象
             maxNum: 5, // 限制最多数量 0 无限制
             concurrencyMaxNum: 0,// 并发处理数 0无限制
-            upload: {
-                // 上传配置，组件 upload
-                drag: true, // 默认排序
-            }, // 参考组件 sortable, false 则无排序
-            sortable: {}, /**
-             *  上传按钮状态: 1.一直显示(默认)  2.没有成员时显示 3.隐藏
-             */
-            uploadBtnStatus: 1, // 操作按钮
+            // 上传按钮状态: 1.一直显示(默认)  2.没有成员时显示 3.隐藏
+            uploadBtnStatus: 1,
+            // 操作按钮
             operation: {
                 update: true,
                 preview: true,
                 delete: true,
             },
-
+            // 样式
+            style: {
+                size: 120, // 尺寸
+            },
+            upload: {
+                // 上传配置，组件 upload
+                drag: true, // 默认排序
+            },
+            // 参考组件 sortable, false 则无排序
+            sortable: {},
             // 初始化数据
-            initValue: [], parseData: function (res) {
+            initValue: [],
+            parseData: function (res) {
                 return {
                     code: res.code, // 状态码（此处按0成功）
                     message: res.msg || '', // 返回信息
@@ -83,7 +88,8 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
                     url: (res.data && res.data.info) ? res.data.info.url : '', // 文件地址
                     mimeType: (res.data && res.data.info) ? res.data.info.mimeType : 'image/jpeg',
                 };
-            }, on: {
+            },
+            on: {
                 /**
                  * 添加成员回调
                  *
@@ -91,21 +97,24 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
                  * @param obj+
                  */
                 add: function (itemInfo, obj) {
-                }, /**
+                },
+                /**
                  * 删除成员回调
                  *
                  * @param itemInfo
                  * @param obj
                  */
                 del: function (itemInfo, obj) {
-                }, /**
+                },
+                /**
                  * 上传成功回调
                  *
                  * @param itemInfo 成员信息
                  * @param obj
                  */
                 success: function (itemInfo, obj) {
-                }, /**
+                },
+                /**
                  * 上传失败回调
                  *
                  * @param errorMsg 错误信息
@@ -227,15 +236,8 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
                 opacity: 0,
             });
         });
-        // 蒙版功能按钮能力
-        that.container.delegate('.uploadMore-operation-action', 'mouseenter', function (e) {
-            $(this).css({
-                color: $(this).hasClass('uploadMore-operation-action-delete') ? 'red' : '#4444d9',
-            });
-        });
-        that.container.delegate('.uploadMore-operation-action', 'mouseleave', function (e) {
-            $(this).css({color: 'white',});
-        });
+
+
         // 删除按钮事件
         that.container.delegate('.uploadMore-operation-action-delete', 'click', function (e) {
             layui.stope(e);
@@ -949,6 +951,12 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
     uploadMore.prototype.getItemTpl = function (index) {
         var that = this;
         var item = $('<div class="uploadMore-item" data-index="' + index + '"></div>');
+        if (that.options.style.size > 0) {
+            item.css({
+                width: that.options.style.size + "px",
+                height: that.options.style.size + "px",
+            });
+        }
 
         var itemInfo = that.getItemInfo(index);
         // 插入文件展示
@@ -957,32 +965,72 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
         // 排序展示
         if (that.options.sortable !== false) {
             // 插入拖拽排序按钮
-            item.append('<span class="uploadMore-drag"><span' + '                    style="font-size: 16px; display: inline-flex;"><svg xmlns="http://www.w3.org/2000/svg"' + '                                                                        xmlns:xlink="http://www.w3.org/1999/xlink"' + '                                                                        aria-hidden="true" role="img"' + '                                                                        class="iconify iconify--ant-design" width="1em"' + '                                                                        height="1em" preserveAspectRatio="xMidYMid meet"' + '                                                                        viewBox="0 0 1024 1024"><path' + '                    fill="currentColor"' + '                    d="M847.9 592H152c-4.4 0-8 3.6-8 8v60c0 4.4 3.6 8 8 8h605.2L612.9 851c-4.1 5.2-.4 13 6.3 13h72.5c4.9 0 9.5-2.2 12.6-6.1l168.8-214.1c16.5-21 1.6-51.8-25.2-51.8zM872 356H266.8l144.3-183c4.1-5.2.4-13-6.3-13h-72.5c-4.9 0-9.5 2.2-12.6 6.1L150.9 380.2c-16.5 21-1.6 51.8 25.1 51.8h696c4.4 0 8-3.6 8-8v-60c0-4.4-3.6-8-8-8z"></path></svg></span></span>');
+            item.append(
+                '<span class="uploadMore-drag">' +
+                '   <span style="font-size: 16px; display: inline-flex;">' +
+                '       <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"' +
+                '         aria-hidden="true" role="img"' +
+                '         class="iconify iconify--ant-design" width="1em"' +
+                '         height="1em" preserveAspectRatio="xMidYMid meet"' +
+                '         viewBox="0 0 1024 1024">' +
+                '         <path fill="currentColor" d="M847.9 592H152c-4.4 0-8 3.6-8 8v60c0 4.4 3.6 8 8 8h605.2L612.9 851c-4.1 5.2-.4 13 6.3 13h72.5c4.9 0 9.5-2.2 12.6-6.1l168.8-214.1c16.5-21 1.6-51.8-25.2-51.8zM872 356H266.8l144.3-183c4.1-5.2.4-13-6.3-13h-72.5c-4.9 0-9.5 2.2-12.6 6.1L150.9 380.2c-16.5 21-1.6 51.8 25.1 51.8h696c4.4 0 8-3.6 8-8v-60c0-4.4-3.6-8-8-8z"></path>' +
+                '       </svg>' +
+                '   </span>' +
+                '</span>');
         }
-
         // 插入蒙版操作
         if (that.options.operation.update || that.options.operation.preview || that.options.operation.delete) {
             var operationBox = $('<div class="uploadMore-operation layui-hide"><div class="uploadMore-operation-box"></div></div>');
             // 编辑按钮
             if (that.options.operation.update) {
-                operationBox.find('.uploadMore-operation-box').append('<div style="cursor:pointer" class="uploadMore-operation-action uploadMore-operation-action-edit" >' + '    <i class="layui-icon layui-icon-edit"></i>' + '</div>');
+                operationBox.find('.uploadMore-operation-box').append(
+                    '<div  class="uploadMore-operation-action uploadMore-operation-action-edit" >'
+                    + '       <i class="layui-icon layui-icon-edit"></i>' +
+                    '      </div>'
+                );
             }
             // 预览按钮
             if (that.options.operation.preview && that.isAllowPreview(itemInfo.mimeType)) {
-                operationBox.find('.uploadMore-operation-box').append('<div style="cursor: pointer; color: white;" class="uploadMore-operation-action uploadMore-operation-action-preview" >' + '    <i class="layui-icon layui-icon-eye"></i>' + '</div>');
+                operationBox.find('.uploadMore-operation-box').append(
+                    '<div  class="uploadMore-operation-action uploadMore-operation-action-preview" >' +
+                    '           <i class="layui-icon layui-icon-eye"></i>' +
+                    '      </div>'
+                );
             }
             // 删除按钮
             if (that.options.operation.delete) {
-                operationBox.find('.uploadMore-operation-box').append('<div style="cursor: pointer; color: white;" class="uploadMore-operation-action uploadMore-operation-action-delete">' + '  <i class="layui-icon layui-icon-delete"></i>' + '</div>');
+                operationBox.find('.uploadMore-operation-box').append(
+                    '<div  class="uploadMore-operation-action uploadMore-operation-action-delete">' +
+                    '        <i class="layui-icon layui-icon-delete"></i>' +
+                    '      </div>'
+                );
             }
             item.append(operationBox);
         }
-
         // 加上进度条
         var filter = that.getProgressFilterName(index);
-        item.append('<div class="uploadMore-progress">' + '                <div class="uploadMore-progress-box" >' + '                   <div class="layui-progress layui-progress-big" lay-filter="' + filter + '" lay-showpercent="true">' + '                       <div class="layui-progress-bar" lay-percent="0%"></div>' + '                    </div>' + '                    <div class="uploadMore-item-status">待处理</div>' + '                 </div>' + '</div>');
+        item.append(
+            '<div class="uploadMore-progress">' +
+            '                <div class="uploadMore-progress-box" >' +
+            '                   <div class="layui-progress layui-progress-big" lay-filter="' + filter + '" lay-showpercent="true">' +
+            '                       <div class="layui-progress-bar" lay-percent="0%"></div>' +
+            '                    </div>' +
+            '                    <div class="uploadMore-item-status">待处理</div>' +
+            '                 </div>' +
+            '</div>'
+        );
         // 加上错误信息展示
-        item.append('<div class="uploadMore-message layui-hide">' + '                <div class="uploadMore-message-box" >' + '                   <div class="uploadMore-message-content">' + '                       <span class="uploadMore-error" data-tips="测试错误信息"><i class="layui-icon layui-icon-face-cry"></i> 上传失败</span>' + '                       <span class="uploadMore-retryUpload"><i class="layui-icon layui-icon-refresh"></i> 重新上传</span>' + '                       <span class="uploadMore-operation-action-delete"><i class="layui-icon layui-icon-delete"></i> 直接删除</span>' + '                   </div>' + '                 </div>' + '        </div>');
+        item.append(
+            '<div class="uploadMore-message layui-hide">' +
+            '                <div class="uploadMore-message-box" >' +
+            '                   <div class="uploadMore-message-content">' +
+            '                       <span class="uploadMore-error" data-tips="测试错误信息"><i class="layui-icon layui-icon-face-cry"></i> 上传失败</span>' +
+            '                       <span class="uploadMore-retryUpload"><i class="layui-icon layui-icon-refresh"></i> 重新上传</span>' +
+            '                       <span class="uploadMore-operation-action-delete"><i class="layui-icon layui-icon-delete"></i> 直接删除</span>' +
+            '                   </div>' +
+            '                 </div>' +
+            '        </div>'
+        );
 
         return item;
     };
@@ -998,9 +1046,16 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
         var tpl;
         var mime = itemInfo.mimeType ? itemInfo.mimeType : '';
         if (mime.indexOf('image/') !== -1) {
-            tpl = $('<div class=" uploadMore-file uploadMore-img-preview">' + '    <img src="' + (itemInfo ? itemInfo.url : '') + '" style="height: 100%;max-height: 100%">' + '</div>');
+            tpl = $(
+                '<div class=" uploadMore-file uploadMore-img-preview">' +
+                '    <img src="' + (itemInfo ? itemInfo.url : '') + '" style="height: 100%;max-height: 100%">' +
+                '</div>'
+            );
         } else {
-            tpl = $('<div class=" uploadMore-file uploadMore-files-preview">' + '   <span><i class="layui-icon layui-icon-file"></i></span>' + '</div>');
+            tpl = $('<div class=" uploadMore-file uploadMore-files-preview">' +
+                '   <span><i class="layui-icon layui-icon-file"></i></span>' +
+                '</div>'
+            );
         }
 
         return tpl;
@@ -1022,14 +1077,32 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
     uploadMore.prototype.getUploadBtnTpl = function () {
         var that = this;
         var item = $('<div class="uploadMore-uploadBtn"></div>');
+        if (that.options.style.size > 0) {
+            item.css({
+                width: that.options.style.size + "px",
+                height: that.options.style.size + "px",
+            });
+        }
         // 文件数量限制展示(限制文件数量)
         var isLimitMax = that.options.maxNum > 0;
-        item.append('<div class="uploadMore-fileNum" ' + (isLimitMax ? 'uploadMore-tips="最多支持上传' + that.options.maxNum + '个文件"' : '') + ' style="padding: 0 6px;">' + '    <span class="uploadMore-currentNum">0</span>' + '    <span class="' + (isLimitMax ? '' : 'layui-hide') + '">/</span>' + '    <span class="uploadMore-maxNum' + (isLimitMax ? '' : 'layui-hide') + '" >' + that.options.maxNum + '</span>' + '</div>');
+        item.append(
+            '<div class="uploadMore-fileNum" ' + (isLimitMax ? 'uploadMore-tips="最多支持上传' + that.options.maxNum + '个文件"' : '') + ' style="padding: 0 6px;">' +
+            '    <span class="uploadMore-currentNum">0</span>' + '    <span class="' + (isLimitMax ? '' : 'layui-hide') + '">/</span>' +
+            '    <span class="uploadMore-maxNum' + (isLimitMax ? '' : 'layui-hide') + '" >' + that.options.maxNum + '</span>' +
+            '</div>'
+        );
 
         // 上传图标展示
         var icon = that.options.upload.drag ? 'layui-icon-upload' : 'layui-icon-add-1';
         var text = that.options.upload.drag ? '拖拽或点击上传' : '点击上传';
-        item.append('<label class="uploadMore-icon-box">' + '   <span style="font-size: 24px; display: inline-flex; ">' + '     <span>' + '        <i class="layui-icon ' + icon + '" style="font-size: 24px;" title="' + text + '"></i>' + '     </span>' + '  </span>' + '</label>');
+        item.append('<label class="uploadMore-icon-box">' +
+            '   <span style="font-size: 24px; display: inline-flex; ">' +
+            '     <span>' +
+            '        <i class="layui-icon ' + icon + '" style="font-size: 24px;" title="' + text + '"></i>' +
+            '     </span>' +
+            '  </span>' +
+            '</label>'
+        );
         return item;
     };
 
