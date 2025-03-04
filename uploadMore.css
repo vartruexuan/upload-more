@@ -7,16 +7,18 @@
     /*padding: 10px;*/
 }
 
-/* 成员 */
-.uploadMore-item {
+/* 成员 | 上传按钮 */
+.uploadMore-item,
+.uploadMore-uploadBtn {
     position: relative;
     width: 120px;
     height: 120px;
-    border: 1px solid gray;
+    border: 1px solid #e0e0e0; /* 浅灰色边框 */
     text-align: center;
     line-height: 80px;
     padding: 4px;
-    border-radius: 4px;
+    border-radius: 8px;
+    transition: all 0.3s ease; /* 过渡效果 */
 }
 
 /* 图片展示 */
@@ -49,18 +51,11 @@
 /*************************** 上传按钮 start ***************************/
 /* 上传按钮 */
 .uploadMore-uploadBtn {
-    position: relative;
-    width: 120px;
-    height: 120px;
-    text-align: center;
-    line-height: 80px;
-    padding: 4px;
-    border-radius: 4px;
-    border: 1px dashed #d9d9d9;
+    border: 1px dashed gray;
 }
 .uploadMore-uploadBtn:hover {
     border-color: #40a9ff;
-    color:  #40a9ff;
+    color: #40a9ff;
 }
 
 /* 上传按钮-文件数量 */
@@ -111,7 +106,8 @@
     background: rgba(0, 0, 0, 0.4);
     font-size: 30px;
     opacity: 0;
-    transition: all 0.2s ease 0s;
+    transition: all 0.3s ease; /* 过渡效果 */
+    border-radius: 8px; /* 圆角 */
 }
 
 /*操作按钮容器*/
@@ -137,18 +133,16 @@
 
 .uploadMore-operation-action .layui-icon:hover {
     cursor: pointer;
-    color: #0099CC;
-    font-size: 22px;
+    color: #0099cc;
+
     font-weight: bold;
 }
 
 .uploadMore-operation-action-delete .layui-icon:hover {
     cursor: pointer;
     color: red;
-    font-size: 22px;
     font-weight: bold;
 }
-
 
 /*************************** 进度条 start ***************************/
 .uploadMore-progress {
@@ -168,8 +162,8 @@
     color: #fff;
 }
 
-.uploadMore-progress-bg{
-    background-color: #1e9fff !important;
+.uploadMore-progress-bg {
+    background-color: #0099cc !important;
     color: #fff !important;
 }
 
@@ -214,7 +208,7 @@
     color: #fff;
 }
 .uploadMore-message-content span:hover {
-    color: #0099CC;
+    color: #0099cc;
     font-weight: bold;
 }
 
@@ -222,6 +216,6 @@
     color: red;
 }
 
-.uploadMore-item-status{
+.uploadMore-item-status {
     color: white;
 }
