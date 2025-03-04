@@ -56,8 +56,11 @@
     line-height: 80px;
     padding: 4px;
     border-radius: 4px;
-
     border: 1px dashed #d9d9d9;
+}
+.uploadMore-uploadBtn:hover {
+    border-color: #40a9ff;
+    color:  #40a9ff;
 }
 
 /* 上传按钮-文件数量 */
@@ -165,6 +168,11 @@
     color: #fff;
 }
 
+.uploadMore-progress-bg{
+    background-color: #1e9fff !important;
+    color: #fff !important;
+}
+
 /*************************** 上传失败信息 start ***************************/
 .uploadMore-message {
     position: absolute;
@@ -203,6 +211,7 @@
     align-items: center;
     cursor: pointer;
     font-size: 14px;
+    color: #fff;
 }
 .uploadMore-message-content span:hover {
     color: #0099CC;
@@ -211,4 +220,8 @@
 
 .uploadMore-message-content .uploadMore-operation-action-delete:hover {
     color: red;
+}
+
+.uploadMore-item-status{
+    color: white;
 }

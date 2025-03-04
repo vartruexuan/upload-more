@@ -1012,8 +1012,8 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
         item.append(
             '<div class="uploadMore-progress">' +
             '                <div class="uploadMore-progress-box" >' +
-            '                   <div class="layui-progress layui-progress-big" lay-filter="' + filter + '" lay-showpercent="true">' +
-            '                       <div class="layui-progress-bar" lay-percent="0%"></div>' +
+            '                   <div class="layui-progress layui-progress-big " lay-filter="' + filter + '" lay-showpercent="true">' +
+            '                       <div class="layui-progress-bar uploadMore-progress-bg" lay-percent="0%"></div>' +
             '                    </div>' +
             '                    <div class="uploadMore-item-status">待处理</div>' +
             '                 </div>' +
