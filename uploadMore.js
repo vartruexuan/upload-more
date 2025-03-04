@@ -33,11 +33,7 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
         // 先清空
         this.delete();
         // 嵌入css
-        $.ajax({
-            url: layui.cache.modules[MOD_NAME].replace('.js', '.css'), async: false, success: function (res) {
-                $('head').append('<style id="' + MOD_NAME + '-css">' + res + '</style>');
-            },
-        });
+        this.loadCss();
         // 渲染上传按钮
         that.renderUploadBtn();
         // 绑定事件
@@ -47,6 +43,14 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
         return this;
     };
 
+    uploadMore.prototype.loadCss = function () {
+        // 嵌入css
+        $.ajax({
+            url: layui.cache.modules[MOD_NAME].replace('.js', '.css'), async: false, success: function (res) {
+                $('head').append('<style id="' + MOD_NAME + '-css">' + res + '</style>');
+            },
+        });
+    };
     /**
      *
      * 初始化配置
@@ -144,28 +148,13 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
         // 上传对象
         this.upload = null;
         // 成员信息
-        this.items = {
-            // 文件下标:{文件信息}
-            /*1: {
-                      elem: null, // 成员dom
-                      fileInfo: {},// 文件信息
-                      url: '',// 文件地址
-                      progress: null, // 进度条实例
-                      isShowAction: false, // 是否展示操作按钮
-                      sort:0, // 排序值
-                      isSuccess:false,// 是否上传成功
-                      isRetry: false,// 是否为重新上传
-                      status:1, // 状态: 1.待处理 2.上传中 3.上传失败 4.上传成功
-                  }*/
-        };
-
+        this.items = {};
         // 队列信息
         this.waitWork = []; // 待处理文件
         this.queueWork = [];
         this.queueWorkLock = false;
         this.queueWorkKey = 0;
         this.queueWorkStatusNum = 0;
-
 
         return this;
     };
@@ -178,7 +167,7 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
 
         if (that.options.initValue) {
             layui.each(that.options.initValue, function (i, v) {
-                v = layui.type(v) === 'object' ? v : {url: v};
+                v = layui.type(v) === 'object' ? v : { url: v };
                 var urlInfo = layui.url(v.url);
                 var index = that.addItem(null, {
                     name: urlInfo.pathname[urlInfo.pathname.length - 1], type: uploadMoreObj.getMimeTypeByFile(v.url),
@@ -226,7 +215,7 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
             // 显示蒙版
             var index = $(this).data('index');
             if (that.getItemInfo(index).isShowAction) {
-                $(this).find('.uploadMore-operation').removeClass('layui-hide').animate({opacity: 0.8}, 200);
+                $(this).find('.uploadMore-operation').removeClass('layui-hide').animate({ opacity: 0.8 }, 200);
             }
         });
         that.container.delegate('.uploadMore-item', 'mouseleave', function (e) {
@@ -336,7 +325,25 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
     uploadMore.prototype.getIndex = function (index = null) {
         return index ? index : ++this.index;
     };
-
+    /**
+     * 默认成员信息
+     *
+     * @returns {*}
+     */
+    uploadMore.prototype.defaultItemInfo = function (index) {
+        return {
+            index: index,
+            elem: null, // 成员dom
+            fileInfo: {},// 文件信息
+            url: '',// 文件地址
+            progress: null, // 进度条实例
+            isShowAction: false, // 是否展示操作按钮
+            sort: 0, // 排序值
+            isSuccess: false,// 是否上传成功
+            isRetry: false,// 是否为重新上传
+            status: 1, // 状态: 1.待处理 2.上传中 3.上传失败 4.上传成功
+        }
+    };
     /**
      * 添加成员
      *
@@ -350,17 +357,10 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
         var that = this;
         index = that.getIndex(index);
         // 初始化成员信息
-        that.items[index] = {
-            index: index, // 下标
-            url: '', // 文件地址
-            fileInfo: null, // 文件信息
+        that.setItemInfo(index, $.extend(that.defaultItemInfo(index), {
             file: file, // 文件对象
-            isShowAction: false, // 是否展示操作按钮
             mimeType: file ? file.type : null, // mime类型
-            sort: 0, // 排序值
-            isSuccess: false, // 是否上传成功
-            status: 1, isRetry: false,
-        };
+        }));
         var itemTpl = that.getItemTpl(index);
         if (!sortIndex) {
             that.uploadBtn.before(itemTpl);
@@ -374,7 +374,8 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
         layui.element.render('progress', progressFilterName);
         // 初始化成员信息
         that.setItemInfo(index, {
-            elem: itemTpl, progress: progressFilterName,// 进度条
+            elem: itemTpl,
+            progress: progressFilterName,// 进度条
             upload: that.bindUploadByItem(index),// 绑定单文件操作对象
         });
 
@@ -407,7 +408,9 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
         }
         if (obj) {
             that.pushWaitWork({
-                index: index, obj: obj, file: file,
+                index: index,
+                obj: obj,
+                file: file,
             });
         }
 
@@ -415,7 +418,6 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
         if (that.options.on.add) {
             that.options.on.add(that.getItemInfo(index), that);
         }
-
         return index;
     };
 
@@ -518,7 +520,6 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
                 that.done(currentIndex, res);
             }, // 上传失败
             error: function (currentIndex, upload) {
-
                 that.done(currentIndex, null);
             }
         };
@@ -1149,7 +1150,7 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
             var index = $(this).data('index');
             var itemInfo = that.getItemInfo(index);
             if (itemInfo.isSuccess) {
-                list.push($.extend(itemInfo.fileInfo, {url: itemInfo.url}));
+                list.push($.extend(itemInfo.fileInfo, { url: itemInfo.url }));
             }
         });
         return list;
@@ -1208,7 +1209,8 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
             while ((new Date()).getTime() - start < delay) {
                 continue;
             }
-        }, /**
+        },
+        /**
          * 全局配置设置
          *
          * @param options
@@ -1217,7 +1219,15 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
             this.options = options;
             return this;
         }, getMimeTypeByExt: function (ext) {
-            var mimeType = {
+            return this.getMimeTypes()[ext];
+        }, getMimeTypeByFile: function (filename) {
+            return this.getMimeTypeByExt(this.extname(filename));
+        }, extname: function (filename) {
+            if (filename.lastIndexOf('.') > 0) {
+                return filename.substring(filename.lastIndexOf('.') + 1);
+            }
+        }, getMimeTypes: function () {
+            return {
                 123: 'application/vnd.lotus-1-2-3',
                 '3dml': 'text/vnd.in3d.3dml',
                 '3ds': 'image/x-3ds',
@@ -2211,14 +2221,7 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
                 zirz: 'application/vnd.zul',
                 zmm: 'application/vnd.handheld-entertainment+xml',
             };
-            return mimeType[ext];
-        }, getMimeTypeByFile: function (filename) {
-            return this.getMimeTypeByExt(this.extname(filename));
-        }, extname: function (filename) {
-            if (filename.lastIndexOf('.') > 0) {
-                return filename.substring(filename.lastIndexOf('.') + 1);
-            }
-        },
+        }
     };
     exports(MOD_NAME, uploadMoreObj);
 });
