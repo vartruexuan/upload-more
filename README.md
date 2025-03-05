@@ -57,7 +57,7 @@ layui.config({
              - 午夜紫主题 (theme-midnight)
              - 苍穹蓝主题 (theme-skyblue)
              */
-            theme: 'default', // 主题 theme-deepsea 深空蓝 theme-rosegold 玫瑰金 theme-mist 雾灰主题 theme-sunset 日落橙
+            theme: 'default', 
         },
         // 成员操作按钮配置 (默认都有)
         operation: {
