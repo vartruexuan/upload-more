@@ -129,6 +129,7 @@
 .uploadMore-operation-action .layui-icon {
     cursor: pointer;
     color: white;
+    text-shadow: 0 0 10px #0099cc;
 }
 
 .uploadMore-operation-action .layui-icon:hover {
@@ -141,6 +142,7 @@
 .uploadMore-operation-action-delete .layui-icon:hover {
     cursor: pointer;
     color: red;
+    text-shadow: 0 0 10px red;
     font-weight: bold;
 }
 
@@ -220,3 +222,267 @@
 .uploadMore-item-status {
     color: white;
 }
+
+/*************************** 新增主题扩展 start ***************************/
+/* 日落橙主题 */
+.theme-sunset .uploadMore-item,
+.theme-sunset .uploadMore-uploadBtn {
+    border-color: #FF7469;
+    background: rgba(255, 235, 235, 0.2);
+}
+.theme-sunset .uploadMore-uploadBtn:hover {
+    border-color: #FF7469;
+    color: #FF7469;
+}
+.theme-sunset .uploadMore-progress-bg {
+    background: linear-gradient(to right, #FF7469, #FF9E97) !important;
+    box-shadow: 0 0 10px rgba(255, 116, 105, 0.5);
+}
+.theme-sunset .uploadMore-message-content span {
+    color: #FFEAE8;
+}
+.theme-sunset .uploadMore-message-content span:hover {
+    color: #FF5C50;
+}
+.theme-sunset .uploadMore-operation-action .layui-icon {
+    color: #FF9E97;
+    text-shadow: 0 0 12px #FF7469;
+}
+.theme-sunset .uploadMore-operation-action .layui-icon:hover {
+    color: #FF7469;
+    text-shadow: 0 0 15px rgba(255, 116, 105, 0.8);
+}
+
+/* 深海蓝主题 */
+.theme-deepsea .uploadMore-item,
+.theme-deepsea .uploadMore-uploadBtn {
+    border-color: #3D6A9B;
+    background: rgba(241, 246, 251, 0.2);
+}
+.theme-deepsea .uploadMore-uploadBtn:hover {
+    border-color: #3D6A9B;
+    color: #3D6A9B;
+}
+.theme-deepsea .uploadMore-progress-bg {
+    background: linear-gradient(to right, #3D6A9B, #598EC2) !important;
+    box-shadow: 0 0 10px rgba(61, 106, 155, 0.5);
+}
+.theme-deepsea .uploadMore-message-content span {
+    color: #E1F0FF;
+}
+.theme-deepsea .uploadMore-message-content span:hover {
+    color: #598EC2;
+}
+.theme-deepsea .uploadMore-operation-action .layui-icon {
+    color: #7FA3C9;
+    text-shadow: 0 0 12px #3D6A9B;
+}
+.theme-deepsea .uploadMore-operation-action .layui-icon:hover {
+    color: #3D6A9B;
+    text-shadow: 0 0 15px rgba(61, 106, 155, 0.8);
+}
+
+/* 玫瑰金主题 */
+.theme-rosegold .uploadMore-item,
+.theme-rosegold .uploadMore-uploadBtn {
+    border-color: #D18E9B;
+    background: rgba(255, 245, 247, 0.2);
+}
+.theme-rosegold .uploadMore-uploadBtn:hover {
+    border-color: #D18E9B;
+    color: #D18E9B;
+}
+.theme-rosegold .uploadMore-progress-bg {
+    background: linear-gradient(to right, #D18E9B, #E1A0AD) !important;
+    box-shadow: 0 0 10px rgba(209, 142, 155, 0.5);
+}
+.theme-rosegold .uploadMore-message-content span {
+    color: #FFF3F5;
+}
+.theme-rosegold .uploadMore-message-content span:hover {
+    color: #E1A0AD;
+}
+.theme-rosegold .uploadMore-operation-action .layui-icon {
+    color: #E1A0AD;
+    text-shadow: 0 0 12px #D18E9B;
+}
+.theme-rosegold .uploadMore-operation-action .layui-icon:hover {
+    color: #D18E9B;
+    text-shadow: 0 0 15px rgba(209, 142, 155, 0.8);
+}
+
+/* 雾灰主题 */
+.theme-mist .uploadMore-item,
+.theme-mist .uploadMore-uploadBtn {
+    border-color: #A0AEC0;
+    background: rgba(245, 246, 250, 0.2);
+}
+.theme-mist .uploadMore-uploadBtn:hover {
+    border-color: #A0AEC0;
+    color: #A0AEC0;
+}
+.theme-mist .uploadMore-progress-bg {
+    background: linear-gradient(to right, #A0AEC0, #B8C4D2) !important;
+    box-shadow: 0 0 10px rgba(160, 174, 192, 0.4);
+}
+.theme-mist .uploadMore-message-content span {
+    color: #F8FAFC;
+}
+.theme-mist .uploadMore-message-content span:hover {
+    color: #C0CCD9;
+}
+.theme-mist .uploadMore-operation-action .layui-icon {
+    color: #B8C4D2;
+    text-shadow: 0 0 12px #A0AEC0;
+}
+.theme-mist .uploadMore-operation-action .layui-icon:hover {
+    color: #A0AEC0;
+    text-shadow: 0 0 15px rgba(160, 174, 192, 0.8);
+}
+
+/* 森林绿主题 */
+.theme-forest .uploadMore-item,
+.theme-forest .uploadMore-uploadBtn {
+    border-color: #2E7D32;
+    background: rgba(232, 245, 233, 0.15);
+}
+.theme-forest .uploadMore-uploadBtn:hover {
+    border-color: #2E7D32;
+    color: #2E7D32;
+}
+.theme-forest .uploadMore-progress-bg {
+    background: linear-gradient(to right, #2E7D32, #4CAF50) !important;
+    box-shadow: 0 0 10px rgba(46, 125, 50, 0.4);
+}
+.theme-forest .uploadMore-message-content span {
+    color: #E8F5E9;
+}
+.theme-forest .uploadMore-message-content span:hover {
+    color: #66BB6A;
+}
+.theme-forest .uploadMore-operation-action .layui-icon {
+    color: #4CAF50;
+    text-shadow: 0 0 12px #2E7D32;
+}
+.theme-forest .uploadMore-operation-action .layui-icon:hover {
+    color: #2E7D32;
+    text-shadow: 0 0 15px rgba(46, 125, 50, 0.8);
+}
+
+/* 薰衣草紫主题 */
+.theme-lavender .uploadMore-item,
+.theme-lavender .uploadMore-uploadBtn {
+    border-color: #9575CD;
+    background: rgba(237, 231, 246, 0.15);
+}
+.theme-lavender .uploadMore-uploadBtn:hover {
+    border-color: #9575CD;
+    color: #9575CD;
+}
+.theme-lavender .uploadMore-progress-bg {
+    background: linear-gradient(to right, #9575CD, #B39DDB) !important;
+    box-shadow: 0 0 10px rgba(149, 117, 205, 0.4);
+}
+.theme-lavender .uploadMore-message-content span {
+    color: #EDE7F6;
+}
+.theme-lavender .uploadMore-message-content span:hover {
+    color: #B39DDB;
+}
+.theme-lavender .uploadMore-operation-action .layui-icon {
+    color: #B39DDB;
+    text-shadow: 0 0 12px #9575CD;
+}
+.theme-lavender .uploadMore-operation-action .layui-icon:hover {
+    color: #9575CD;
+    text-shadow: 0 0 15px rgba(149, 117, 205, 0.8);
+}
+
+/* 珊瑚橙主题 */
+.theme-coral .uploadMore-item,
+.theme-coral .uploadMore-uploadBtn {
+    border-color: #FF7043;
+    background: rgba(255, 236, 231, 0.15);
+}
+.theme-coral .uploadMore-uploadBtn:hover {
+    border-color: #FF7043;
+    color: #FF7043;
+}
+.theme-coral .uploadMore-progress-bg {
+    background: linear-gradient(to right, #FF7043, #FF8A65) !important;
+    box-shadow: 0 0 10px rgba(255, 112, 67, 0.4);
+}
+.theme-coral .uploadMore-message-content span {
+    color: #FFE0B2;
+}
+.theme-coral .uploadMore-message-content span:hover {
+    color: #FFAB91;
+}
+.theme-coral .uploadMore-operation-action .layui-icon {
+    color: #FF8A65;
+    text-shadow: 0 0 12px #FF7043;
+}
+.theme-coral .uploadMore-operation-action .layui-icon:hover {
+    color: #FF7043;
+    text-shadow: 0 0 15px rgba(255, 112, 67, 0.8);
+}
+
+/* 午夜紫主题 */
+.theme-midnight .uploadMore-item,
+.theme-midnight .uploadMore-uploadBtn {
+    border-color: #5C6BC0;
+    background: rgba(232, 234, 246, 0.15);
+}
+.theme-midnight .uploadMore-uploadBtn:hover {
+    border-color: #5C6BC0;
+    color: #5C6BC0;
+}
+.theme-midnight .uploadMore-progress-bg {
+    background: linear-gradient(to right, #5C6BC0, #7E8EE7) !important;
+    box-shadow: 0 0 10px rgba(92, 107, 192, 0.4);
+}
+.theme-midnight .uploadMore-message-content span {
+    color: #E8EAF6;
+}
+.theme-midnight .uploadMore-message-content span:hover {
+    color: #9FA8DA;
+}
+.theme-midnight .uploadMore-operation-action .layui-icon {
+    color: #7E8EE7;
+    text-shadow: 0 0 12px #5C6BC0;
+}
+.theme-midnight .uploadMore-operation-action .layui-icon:hover {
+    color: #5C6BC0;
+    text-shadow: 0 0 15px rgba(92, 107, 192, 0.8);
+}
+
+/* 苍穹蓝主题 */
+.theme-skyblue .uploadMore-item,
+.theme-skyblue .uploadMore-uploadBtn {
+    border-color: #2962FF;
+    background: rgba(225, 234, 255, 0.15);
+}
+.theme-skyblue .uploadMore-uploadBtn:hover {
+    border-color: #2962FF;
+    color: #2962FF;
+}
+.theme-skyblue .uploadMore-progress-bg {
+    background: linear-gradient(to right, #2962FF, #448AFF) !important;
+    box-shadow: 0 0 15px rgba(41, 98, 255, 0.6);
+}
+.theme-skyblue .uploadMore-message-content span {
+    color: #E3F2FD;
+}
+.theme-skyblue .uploadMore-message-content span:hover {
+    color: #82B1FF;
+}
+.theme-skyblue .uploadMore-operation-action .layui-icon {
+    color: #448AFF;
+    text-shadow: 0 0 15px #2962FF;
+}
+.theme-skyblue .uploadMore-operation-action .layui-icon:hover {
+    color: #2962FF;
+    text-shadow: 0 0 20px rgba(41, 98, 255, 0.8);
+}
+
+/*************************** 新增主题扩展 end ***************************/

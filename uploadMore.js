@@ -75,6 +75,7 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
             // 样式
             style: {
                 size: 120, // 尺寸
+                theme: 'default', // 主题 theme-deepsea 深空蓝 theme-rosegold 玫瑰金 theme-mist 雾灰主题 theme-sunset 日落橙
             },
             upload: {
                 // 上传配置，组件 upload
@@ -139,7 +140,9 @@ layui.define(['upload', 'layer', 'sortable'], function (exports) {
     uploadMore.prototype.initAttrs = function () {
         // 容器对象
         this.container = $(this.options.elem);
-        this.container.addClass('uploadMore-container');
+        this.container.addClass('uploadMore-container '+this.options.style.theme);
+        // 上传按钮状态
+
         // 上传按钮
         this.uploadBtn = null;
         this.index = 0; // 当前元素下标

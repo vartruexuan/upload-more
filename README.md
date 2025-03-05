@@ -46,6 +46,18 @@ layui.config({
         uploadBtnStatus: 1, // 1.一直显示(默认)  2.没有成员时显示 3.隐藏
         style: {
             size: 120, // 成员尺寸
+            /**
+             - 日落橙主题 (theme-sunset)
+             - 深海蓝主题 (theme-deepsea)
+             - 玫瑰金主题 (theme-rosegold)
+             - 雾灰主题 (theme-mist)
+             - 森林绿主题 (theme-forest)
+             - 薰衣草紫主题 (theme-lavender)
+             - 珊瑚橙主题 (theme-coral)
+             - 午夜紫主题 (theme-midnight)
+             - 苍穹蓝主题 (theme-skyblue)
+             */
+            theme: 'default', // 主题 theme-deepsea 深空蓝 theme-rosegold 玫瑰金 theme-mist 雾灰主题 theme-sunset 日落橙
         },
         // 成员操作按钮配置 (默认都有)
         operation: {
@@ -120,7 +132,7 @@ layui.config({
 - 全局配置  `uploadMore.set(opt)`
 ```javascript
  // 针对上传组件做全局配置
- uploadMore.set({
+uploadMore.set({
     parseData: function (res) {
         return {
             "code": res.code, // code 码 (0 成功)
@@ -140,8 +152,4 @@ layui.config({
     }
 });
 ```
-
-
-
-
 
